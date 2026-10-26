@@ -1,0 +1,3 @@
+# SJD-SYNTHETIC：完全虚构的中文后续访视资料，不代表已经联系患者
+patient_id,name,visit_date,event_id,code,value,unit,source_note
+SIM-ZH-REVIEW-001,虚构测试患者甲,2026-11-20,followup,igg,17.20,g/L,IgG：17.20 g/L

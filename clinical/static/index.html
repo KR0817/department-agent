@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="科室本机资料工作台：上传检查单与病例，逐项核对原文后归档，并生成访视随访待办。">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#ffffff">
+  <title>科室综合 Agent · 临床、证据与门诊分析</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/static/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/department.css">
+  <script defer src="/static/department.js"></script>
+  <script type="module" src="/static/app.js"></script>
+  <script type="module" src="/static/ui.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#workspace" data-skip-target="workspace_title">跳到工作区</a>
+  <header>
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="8" fill="#176b5a"/><path d="M16 6.5c3.9 4.8 6.4 8.5 6.4 11.6a6.4 6.4 0 0 1-12.8 0c0-3.1 2.5-6.8 6.4-11.6z" fill="#fff"/><path d="M12.9 18.4a3.2 3.2 0 0 0 3.1 3.2" fill="none" stroke="#176b5a" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <b class="brand-word">科室 Agent</b><span class="brand-name">临床 · 证据 · 分析</span>
+    </div>
+    <nav class="header-actions" aria-label="账户"><button id="account_button" type="button" class="text-button" hidden>账户设置</button><button id="logout" type="button" class="text-button" hidden>退出登录</button></nav>
+  </header>
+  <div id="mode_notice" class="notice">资料在本机处理 · 随访消息保留在待发送队列</div>
+  <section id="auth_shell" class="auth-shell" aria-labelledby="auth_title">
+    <div class="auth-context"><p class="eyebrow">科室资料工作台</p><h1>资料、复核、随访，<br>接续每一次就诊。</h1><p>批量上传检查单和病例，自动提取信息。核对原文后统一确认归档，随访安排同步进入队列。</p><div class="auth-flow"><span>批量提取</span><span>核对异常</span><span>归档与随访</span></div></div>
+    <div class="card auth-card">
+      <h2 id="auth_title">正在检查账户状态…</h2>
+      <p id="auth_description" class="help">请稍候。</p>
+      <form id="auth_form" hidden>
+        <label class="form-label"><span>账户名</span><input id="auth_username" type="text" autocomplete="username" minlength="3" maxlength="64" pattern="[A-Za-z0-9_.\-]{3,64}" placeholder="例如 department.admin" required></label>
+        <p class="help">3–64 位英文字母、数字、点、下划线或短横线。</p>
+        <label class="form-label"><span>密码</span><input id="auth_password" type="password" autocomplete="current-password" minlength="12" maxlength="128" required></label>
+        <label id="auth_confirm_label" class="form-label" hidden><span>再次输入密码</span><input id="auth_confirm" type="password" autocomplete="new-password" minlength="12" maxlength="128"></label>
+        <p id="auth_password_help" class="help" hidden>请自行设置 12–128 位密码，保存在安全的位置。</p>
+        <button id="auth_submit" type="submit" class="primary">登录工作台</button>
+      </form>
+      <div id="auth_feedback" role="status" aria-live="polite"></div>
+      <button id="auth_recovery" type="button" class="text-button auth-recovery-link" hidden>忘记密码？</button>
+      <section id="recovery_panel" hidden aria-label="重设账户密码">
+        <ol class="recovery-steps" aria-label="密码恢复步骤">
+          <li data-recovery-step="request"><span>1</span>提交申请</li>
+          <li data-recovery-step="pending"><span>2</span>本机确认</li>
+          <li data-recovery-step="approved"><span>3</span>设置密码</li>
+        </ol>
+        <form id="recovery_request_form">
+          <label class="form-label"><span>账户名</span><input id="recovery_username" type="text" autocomplete="username" minlength="3" maxlength="64" pattern="[A-Za-z0-9_.\-]{3,64}" required></label>
+          <p class="help">提交后，由本机管理员确认本次申请。确认通过后，在这里设置新密码。</p>
+          <button id="recovery_request_submit" type="submit" class="primary">申请重设密码</button>
+        </form>
+        <div id="recovery_status" class="recovery-status" hidden>
+          <p id="recovery_status_text" role="status" aria-live="polite"></p>
+          <dl class="recovery-facts"><dt>账户名</dt><dd id="recovery_account"></dd><dt>申请编号</dt><dd id="recovery_id"></dd><dt>有效期至</dt><dd id="recovery_expiry"></dd></dl>
+          <p id="recovery_waiting_help" class="help">请将申请编号告知本机管理员。本页会自动检查确认结果，也可以手动刷新。</p>
+        </div>
+        <form id="recovery_password_form" hidden>
+          <label class="form-label"><span>新密码</span><input id="recovery_password" type="password" autocomplete="new-password" minlength="12" maxlength="128" aria-describedby="recovery_password_help" required></label>
+          <label class="form-label"><span>再次输入新密码</span><input id="recovery_confirmation" type="password" autocomplete="new-password" minlength="12" maxlength="128" required></label>
+          <p id="recovery_password_help" class="help">请设置 12–128 位密码。完成后，该账户在其他页面的登录也会退出，请使用新密码重新登录。</p>
+          <button id="recovery_complete" type="submit" class="primary">保存新密码</button>
+        </form>
+        <div id="recovery_feedback" class="form-feedback" role="status" aria-live="polite"></div>
+        <div class="recovery-actions"><button id="recovery_refresh" type="button" class="secondary" hidden>刷新确认状态</button><button id="recovery_restart" type="button" class="secondary" hidden>重新申请</button><button id="recovery_back" type="button" class="text-button">返回登录</button></div>
+      </section>
+      <button id="auth_retry" type="button" class="secondary" hidden>重新检查连接</button>
+    </div>
+  </section>
+  <main id="workspace" hidden>
+    <nav class="primary-nav" aria-label="主导航">
+      <button id="nav_overview" type="button" aria-current="false">患者总览</button>
+      <button id="nav_workbench" type="button" aria-current="page">科室资料工作台</button>
+      <button id="nav_knowledge" type="button" aria-current="false">知识问答</button>
+      <button id="nav_analysis" type="button" aria-current="false">门诊分析</button>
+    </nav>
+    <section class="intro">
+      <div class="workspace-heading"><div><p class="eyebrow" id="workspace_eyebrow">批量提取 · 核对异常 · 纵向归档</p><h1 id="workspace_title">科室资料工作台</h1></div><span id="operator" class="session"></span></div>
+      <div class="status-line" id="workbench_status"><div id="model" class="pill" role="status">正在检查运行模式…</div><div id="ocr" class="pill" role="status">正在检查 OCR…</div><span class="session">随访仅排队，暂不发送</span></div>
+    </section>
+    <div class="layout" id="workspace_layout">
+      <aside id="upload_sidebar">
+        <section class="card">
+          <h2 id="upload_title">上传检查单或病例</h2>
+          <section class="upload-patient" aria-label="选择资料所属患者">
+            <p class="upload-step">1 · 选择患者</p>
+            <div class="patient-mode" role="group" aria-label="患者选择方式"><button id="patient_existing" type="button" aria-pressed="true">已有患者</button><button id="patient_new" type="button" aria-pressed="false">新建患者</button></div>
+            <div id="patient_picker">
+              <label class="form-label"><span>查找姓名或患者编号</span><input id="patient_search" type="search" autocomplete="off" placeholder="输入姓名或编号"></label>
+              <button id="patient_refresh" type="button" class="text-button">刷新患者名单</button>
+              <div id="patient_options" class="patient-options" aria-label="可选患者"></div>
+            </div>
+            <form id="patient_create" hidden>
+              <label class="form-label"><span>患者编号</span><input id="patient_create_id" type="text" minlength="3" maxlength="64" pattern="[A-Za-z0-9_\-]{3,64}" required></label>
+              <p class="help">3–64 位字母、数字、下划线或短横线，后续资料沿用同一编号。</p>
+              <label class="form-label"><span>姓名</span><input id="patient_create_name" type="text" maxlength="80" required></label>
+              <label class="form-label"><span>性别</span><select id="patient_create_sex"><option value="unknown">未记录</option><option value="female">女</option><option value="male">男</option></select></label>
+              <label class="form-label"><span>出生日期（可选）</span><input id="patient_create_birth" type="date"></label>
+              <button id="patient_create_submit" type="submit" class="secondary">新建并选择患者</button>
+            </form>
+            <div id="patient_picker_feedback" class="form-feedback" role="status" aria-live="polite"></div>
+            <div id="patient_selected" class="patient-selected" role="status" aria-live="polite">尚未选择患者</div>
+          </section>
+          <form id="upload">
+            <p class="upload-step">2 · 选择资料</p>
+            <label class="drop" id="file_drop">
+              <span class="drop-title" aria-hidden="true">拖入文件，或点击选择</span>
+              <span class="drop-hint" aria-hidden="true">可多选 · PDF、图片、Word、文本、CSV · 每份 ≤10 MB</span>
+              <span id="file_summary" class="drop-files">尚未选择文件</span>
+              <input id="file" type="file" accept=".txt,.md,.csv,.docx,.pdf,.png,.jpg,.jpeg" multiple required aria-label="选择上传资料（可多选）" aria-describedby="file_summary">
+            </label>
+            <p class="help">一批资料只属于一位患者，原件身份须与所选患者一致，并有明确就诊日期。</p>
+            <details class="upload-rules">
+              <summary>完整上传规则</summary>
+              <p class="help">PDF、图片、Word、文本、CSV；每份 ≤10 MB。原文 ≤18000 字符。固定候选演示使用结构化 CSV。</p>
+              <p class="help">一批资料只属于一位患者。先选择患者，再选文件；跨患者请重新选择文件开始新批次，已有批次重试保持原患者。原件身份须与所选患者一致，并有明确就诊日期。</p>
+            </details>
+            <p id="local_processing" class="help" hidden>检查单与病例可一起上传，进入同一处理队列。本机 OCR 与模型逐份提取，保留原件供核对。</p>
+            <label id="synthetic_label" class="check upload-check"><input id="synthetic" type="checkbox" required><span>我确认这些资料均为虚构测试资料</span></label>
+            <button id="upload_button" type="submit">上传所选资料</button>
+          </form>
+          <div id="upload_status" role="status" aria-live="polite"></div>
+          <ul id="upload_results" class="upload-results" aria-label="本批上传结果" aria-live="polite"></ul>
+          <button id="upload_retry" type="button" class="secondary" hidden>重试失败或未提交项</button>
+          <details>
+            <summary>下载合成示例资料</summary>
+            <p>以下均为中文虚构测试资料，含合成编号、姓名和就诊日期；下载后上传。</p>
+            <div id="chinese_fixtures"><a href="/fixtures/review-demo-zh.csv" download>中文示例：逐项复核与同日事件.csv</a><br><a href="/fixtures/followup-demo-zh.csv" download>中文示例：后续就诊与随访.csv</a></div>
+            <details><summary>其他格式与历史示例</summary>
+              <div id="demo_fixtures" hidden><a href="/fixtures/review-demo.csv" download>历史复核示例（英文资料）.csv</a><br><a href="/fixtures/followup-demo.csv" download>历史随访示例（英文资料）.csv</a></div>
+              <div id="model_fixtures"><a href="/fixtures/lab.csv" download>历史结构化检验.csv</a><p class="help">以下历史资料用于本地模型 / OCR 路径：</p><a href="/fixtures/visit-1.txt" download>首次就诊.txt</a> · <a href="/fixtures/visit-2.txt" download>第二次就诊.txt</a> · <a href="/fixtures/scan.png" download>扫描示例.png</a></div>
+            </details>
+          </details>
+        </section>
+        <section class="card"><h2>处理队列 <small id="count"></small></h2><div id="jobs"></div></section>
+      </aside>
+      <div>
+        <div class="tabs" id="workbench_tabs" role="tablist" aria-label="科室资料工作台二级视图">
+          <button id="tab_job" type="button" role="tab" aria-selected="true" class="selected">原文与复核</button>
+          <button id="tab_patients" type="button" role="tab" aria-selected="false">纵向档案</button>
+          <button id="tab_tasks" type="button" role="tab" aria-selected="false">访视待办</button>
+          <button id="tab_outbox" type="button" role="tab" aria-selected="false">待发送队列</button>
+          <button id="tab_admin" type="button" role="tab" aria-selected="false" hidden>管理总览</button>
+        </div>
+        <section id="department_full_analysis" class="card content department-full" aria-label="完整处方分析工作区" hidden></section>
+        <section id="content" class="card content" aria-label="当前工作内容">
+          <div class="empty workbench-guide"><h2>上传检查单和病例</h2><p>可一次选择多份资料，统一排队处理。提取信息默认接受；有问题时修改、拒绝或暂缓，最后统一确认归档。</p><ol class="guide-steps"><li><strong>选择患者</strong><span>在左侧选择已有患者，或新建患者档案。</span></li><li><strong>上传资料</strong><span>拖入或选择检查单、病例，可一次多份。</span></li><li><strong>核对归档</strong><span>逐项核对原文，统一确认后生成待办。</span></li></ol><p class="help">同日不同事件分开呈现。更正保留旧值；部分归档可继续未完成项。</p></div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer id="footer_note">本机处理 · 原文与更正历史保留 · 人工复核后归档</footer>
+  <footer><a href="https://github.com/KR0817/department-agent/tree/v0.1.0" target="_blank" rel="noopener noreferrer">Source code v0.1.0 · AGPL-3.0-only</a></footer>
+</body>
+</html>
+

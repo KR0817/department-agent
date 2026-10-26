@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>本地模型逐项证据审核</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;color:#172b37;background:#eef3f5;line-height:1.65}
+*{box-sizing:border-box}body{margin:0}main{max-width:1120px;margin:auto;padding:40px 24px 64px}
+h1,h2,h3,h4,p{margin:0 0 12px}h1{font-size:clamp(1.7rem,4vw,2.5rem);line-height:1.25}h2{font-size:1.2rem}h3{font-size:1.05rem;margin-top:22px}h4{font-size:.95rem}
+.kicker{color:#426473;font-weight:700;letter-spacing:.08em}.notice{background:#fff0d2;border-left:5px solid #b27613;padding:18px 22px;margin:24px 0}
+.intro,.case{background:#fff;border:1px solid #d5e1e6;border-radius:12px;padding:24px;margin:24px 0;box-shadow:0 3px 10px #182d3a08}
+.case-header{border-bottom:1px solid #dbe5e8;padding-bottom:12px;margin-bottom:20px}
+.origin{display:inline-block;background:#eaf0f3;border-radius:5px;padding:4px 10px;font-size:.88rem}
+.claim{font-size:1.08rem;font-weight:600;white-space:pre-wrap}.outcomes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0}
+.outcome{background:#f3f7f8;border:1px solid #d5e1e6;padding:16px;border-radius:8px}.state{font-weight:700}.danger{color:#8c2929;background:#fff1ed}
+.part{border-left:3px solid #588a8e;padding:14px 18px;background:#f8fafb;margin:14px 0}
+.alignment{border:1px solid #d5e1e6;border-radius:8px;padding:14px 18px;margin:18px 0;background:#f8fafb}.alignment h3{margin-top:0}.correction{padding:10px 12px;margin:10px 0;background:#fff;border-left:3px solid #ad843d}.correction pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:0;font-family:ui-monospace,Consolas,monospace}
+.meta{font-size:.86rem;color:#526774}blockquote{margin:12px 0;padding:14px 18px;background:#edf4f3;border-left:3px solid #7d9f9c;white-space:pre-wrap}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.86em}p,code,dd,h2,blockquote{overflow-wrap:anywhere;word-break:normal}
+table{width:100%;border-collapse:collapse;margin:20px 0}th,td{padding:9px 12px;border-bottom:1px solid #dce5e8;text-align:left}thead{background:#edf3f5}
+details{margin-top:22px}summary{cursor:pointer;font-weight:700}.source{display:grid;grid-template-columns:145px 1fr;font-size:.86rem;gap:5px 12px}dt{color:#526774}dd{margin:0}
+footer{color:#526774;font-size:.85rem;margin-top:32px}
+@media(max-width:620px){main{padding:22px 12px 40px}.intro,.case{padding:18px 14px}.outcomes{grid-template-columns:1fr;gap:10px}.source{grid-template-columns:1fr;gap:2px}dd{margin-bottom:8px}.notice{padding:16px}th,td{padding:8px 6px;font-size:.88rem}}
+@media print{body{background:white}main{padding:0}.case{break-inside:avoid;box-shadow:none}.intro,.case{border-radius:0}summary{display:none}}
+</style>
+</head>
+<body>
+<main>
+<p class="kicker">RHEUM EVIDENCE DESK · OFFLINE REVIEW</p>
+<h1>本地模型逐项证据审核</h1>
+<div class="notice"><strong>开发评测资料 · 非临床建议</strong><p>参考标签为开发者暂定标签，尚未完成临床专家裁定。合成材料不代表真实研究；公开摘录也仅覆盖所给文本。模型标签与工作流状态分开显示：无效结果中的“支持”仍是模型原始标签，不构成有效支持或临床批准。</p></div>
+<section class="intro">
+<h2>本次执行</h2>
+<p>模型：<strong>$model</strong> · 策略：<code>$strategy</code> · 执行状态：<code>$status</code></p>
+<p class="meta">运行参数：<code>$settings</code></p>
+<p class="meta">执行计数：<code>$counts</code></p>
+<p class="meta">案例集指纹：<code>$benchmark</code></p>
+<table><thead><tr><th scope="col">指标</th><th scope="col">原始响应严格解析</th><th scope="col">所选解析模式后的模型判决</th><th scope="col">策略后的工作流结果</th></tr></thead><tbody>$metrics</tbody></table>
+<p class="meta">评分文件：<code>$score_availability</code></p>
+<p class="meta">三列分别来自 strict-score.json、raw-score.json 和 score.json，使用同一次模型响应，不代表三次模型运行。严格解析按本次策略的原始输出契约解码；启用标点对齐时，第二列再处理允许的标点缺失。span_ids 策略按服务端原文 ID 还原文本，严格与原始模型判决相同，不使用标点修复。工作流结果再应用人工复核策略；送审或弃答不计为语义判断正确。</p>
+<p class="meta">旧运行可能没有 strict-score.json，此时明确显示“未提供（无评分文件）”。已有评分文件中的逐例 missing 才表示该流缺少预测；不将无文件、missing、invalid 或 abstain 相互替代。对齐步骤本身不产生额外模型调用，实际记录见每例摘要。</p>
+</section>
+$cases
+<footer>偏移按 Unicode 码点计算，结束位置不包含在片段内。有效引句位置只证明文本锚定；文本覆盖不等于语义拆分完整。执行记录为观察记录，不是运行时认证。本页没有网络资源、脚本、自动提交或临床放行功能。</footer>
+</main>
+</body>
+</html>

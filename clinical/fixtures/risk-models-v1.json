@@ -1,0 +1,462 @@
+{
+  "schema_version": 1,
+  "model_version": "synthetic-cox-v1-20261025",
+  "training_source": "synthetic_generator",
+  "clinical_validated": false,
+  "index_basis": "first_baseline_visit",
+  "horizon_days": 365,
+  "method": "CoxPHFitter",
+  "lifelines_version": "0.30.3",
+  "feature_definitions": [
+    {
+      "code": "igg",
+      "label": "IgG",
+      "group": "measurements",
+      "unit": "g/L",
+      "min": 0,
+      "max": 40
+    },
+    {
+      "code": "c3",
+      "label": "\u8865\u4f53 C3",
+      "group": "measurements",
+      "unit": "g/L",
+      "min": 0,
+      "max": 2.5
+    },
+    {
+      "code": "dryness",
+      "label": "\u53e3\u5e72\u5355\u9879\u8bc4\u5206",
+      "group": "symptoms",
+      "unit": "\u5206",
+      "min": 0,
+      "max": 10
+    },
+    {
+      "code": "fatigue",
+      "label": "\u75b2\u52b3\u5355\u9879\u8bc4\u5206",
+      "group": "symptoms",
+      "unit": "\u5206",
+      "min": 0,
+      "max": 10
+    }
+  ],
+  "models": [
+    {
+      "id": "activity_worsening",
+      "label": "\u75c5\u60c5\u6d3b\u52a8\u52a0\u91cd",
+      "feature_codes": [
+        "igg",
+        "c3",
+        "dryness",
+        "fatigue"
+      ],
+      "coefficients": [
+        0.029434146379554445,
+        -0.5269491718953162,
+        0.13635275141976233,
+        0.17826377951360564
+      ],
+      "center": [
+        20.214652724922065,
+        1.2705806796778658,
+        4.883125,
+        4.946875
+      ],
+      "baseline_cumulative_hazard": [
+        {
+          "days": 90,
+          "value": 0.1184679036776236
+        },
+        {
+          "days": 180,
+          "value": 0.2246048827815545
+        },
+        {
+          "days": 365,
+          "value": 0.4606835961009469
+        }
+      ],
+      "training_n": 1600,
+      "training_events": 691,
+      "endpoint_version": "fictional-first-event-v1"
+    },
+    {
+      "id": "infection",
+      "label": "\u611f\u67d3\u4e8b\u4ef6",
+      "feature_codes": [
+        "igg",
+        "c3",
+        "dryness",
+        "fatigue"
+      ],
+      "coefficients": [
+        -0.02346583282144617,
+        -0.26223349865304246,
+        0.02138740164649081,
+        0.12050938267209944
+      ],
+      "center": [
+        20.214652724922065,
+        1.2705806796778658,
+        4.883125,
+        4.946875
+      ],
+      "baseline_cumulative_hazard": [
+        {
+          "days": 90,
+          "value": 0.07902693645070485
+        },
+        {
+          "days": 180,
+          "value": 0.14909920315055963
+        },
+        {
+          "days": 365,
+          "value": 0.3031229190796598
+        }
+      ],
+      "training_n": 1600,
+      "training_events": 482,
+      "endpoint_version": "fictional-first-event-v1"
+    }
+  ],
+  "verification_cases": [
+    {
+      "endpoint_id": "activity_worsening",
+      "features": {
+        "igg": 12.304234702398826,
+        "c3": 0.7675619244099039,
+        "dryness": 3.0,
+        "fatigue": 9.0
+      },
+      "expected_risks": [
+        0.17710558724771697,
+        0.30896543196409776,
+        0.5314019573393727
+      ]
+    },
+    {
+      "endpoint_id": "activity_worsening",
+      "features": {
+        "igg": 38.694384854757246,
+        "c3": 1.0668616760548402,
+        "dryness": 8.0,
+        "fatigue": 10.0
+      },
+      "expected_risks": [
+        0.5749382410298753,
+        0.8024953864762568,
+        0.964093803951253
+      ]
+    },
+    {
+      "endpoint_id": "activity_worsening",
+      "features": {
+        "igg": 7.511826822005676,
+        "c3": 1.0822956905874024,
+        "dryness": 2.0,
+        "fatigue": 4.0
+      },
+      "expected_risks": [
+        0.05002370114002608,
+        0.09271163228389878,
+        0.1809090505509766
+      ]
+    },
+    {
+      "endpoint_id": "activity_worsening",
+      "features": {
+        "igg": 4.929161236799486,
+        "c3": 1.738477283738911,
+        "dryness": 7.0,
+        "fatigue": 10.0
+      },
+      "expected_risks": [
+        0.176300823060209,
+        0.3076835943787124,
+        0.5296173591995825
+      ]
+    },
+    {
+      "endpoint_id": "activity_worsening",
+      "features": {
+        "igg": 21.03738241909098,
+        "c3": 0.0506586365648079,
+        "dryness": 7.0,
+        "fatigue": 10.0
+      },
+      "expected_risks": [
+        0.5315546066781294,
+        0.7625359110092284,
+        0.9476039425048806
+      ]
+    },
+    {
+      "endpoint_id": "activity_worsening",
+      "features": {
+        "igg": 3.6900692390794543,
+        "c3": 0.7414992808592585,
+        "dryness": 7.0,
+        "fatigue": 10.0
+      },
+      "expected_risks": [
+        0.2711117084026402,
+        0.45094341548359784,
+        0.7076300890420653
+      ]
+    },
+    {
+      "endpoint_id": "activity_worsening",
+      "features": {
+        "igg": 21.358410246748342,
+        "c3": 0.13783997110284385,
+        "dryness": 1.0,
+        "fatigue": 3.0
+      },
+      "expected_risks": [
+        0.08847429751683988,
+        0.16107071341711676,
+        0.302483864635834
+      ]
+    },
+    {
+      "endpoint_id": "activity_worsening",
+      "features": {
+        "igg": 0.3266100472463629,
+        "c3": 1.5845694790032063,
+        "dryness": 5.0,
+        "fatigue": 5.0
+      },
+      "expected_risks": [
+        0.05573821468715978,
+        0.10303112222804056,
+        0.19990343779697795
+      ]
+    },
+    {
+      "endpoint_id": "activity_worsening",
+      "features": {
+        "igg": 28.64377855598463,
+        "c3": 2.333832047231174,
+        "dryness": 5.0,
+        "fatigue": 5.0
+      },
+      "expected_risks": [
+        0.08509231432943942,
+        0.15515962454723442,
+        0.29236608197577807
+      ]
+    },
+    {
+      "endpoint_id": "activity_worsening",
+      "features": {
+        "igg": 29.141686114576622,
+        "c3": 1.9289326309653374,
+        "dryness": 7.0,
+        "fatigue": 2.0
+      },
+      "expected_risks": [
+        0.08236293117197913,
+        0.1503748629015812,
+        0.2841214991067864
+      ]
+    },
+    {
+      "endpoint_id": "activity_worsening",
+      "features": {
+        "igg": 14.004936787365612,
+        "c3": 0.641640466841738,
+        "dryness": 1.0,
+        "fatigue": 7.0
+      },
+      "expected_risks": [
+        0.11016870485767827,
+        0.19852174400055944,
+        0.3648535927888893
+      ]
+    },
+    {
+      "endpoint_id": "activity_worsening",
+      "features": {
+        "igg": 23.871783586173226,
+        "c3": 0.05285845777993098,
+        "dryness": 2.0,
+        "fatigue": 4.0
+      },
+      "expected_risks": [
+        0.1331473208926689,
+        0.2373071827059392,
+        0.4262942500736938
+      ]
+    },
+    {
+      "endpoint_id": "infection",
+      "features": {
+        "igg": 12.304234702398826,
+        "c3": 0.7675619244099039,
+        "dryness": 3.0,
+        "fatigue": 9.0
+      },
+      "expected_risks": [
+        0.15629039546012158,
+        0.27431327742588607,
+        0.478926342758368
+      ]
+    },
+    {
+      "endpoint_id": "infection",
+      "features": {
+        "igg": 38.694384854757246,
+        "c3": 1.0668616760548402,
+        "dryness": 8.0,
+        "fatigue": 10.0
+      },
+      "expected_risks": [
+        0.10074138445969416,
+        0.1815453427408349,
+        0.33454974233575396
+      ]
+    },
+    {
+      "endpoint_id": "infection",
+      "features": {
+        "igg": 7.511826822005676,
+        "c3": 1.0822956905874024,
+        "dryness": 2.0,
+        "fatigue": 4.0
+      },
+      "expected_risks": [
+        0.08956173111819399,
+        0.1622423547737757,
+        0.30225373406421063
+      ]
+    },
+    {
+      "endpoint_id": "infection",
+      "features": {
+        "igg": 4.929161236799486,
+        "c3": 1.738477283738911,
+        "dryness": 7.0,
+        "fatigue": 10.0
+      },
+      "expected_risks": [
+        0.175090543594135,
+        0.304519907019395,
+        0.5220743734250115
+      ]
+    },
+    {
+      "endpoint_id": "infection",
+      "features": {
+        "igg": 21.03738241909098,
+        "c3": 0.0506586365648079,
+        "dryness": 7.0,
+        "fatigue": 10.0
+      },
+      "expected_risks": [
+        0.18562015841325874,
+        0.3211741612641258,
+        0.5450538726786194
+      ]
+    },
+    {
+      "endpoint_id": "infection",
+      "features": {
+        "igg": 3.6900692390794543,
+        "c3": 0.7414992808592585,
+        "dryness": 7.0,
+        "fatigue": 10.0
+      },
+      "expected_risks": [
+        0.22691856276295996,
+        0.3846589777794601,
+        0.6273796535613608
+      ]
+    },
+    {
+      "endpoint_id": "infection",
+      "features": {
+        "igg": 21.358410246748342,
+        "c3": 0.13783997110284385,
+        "dryness": 1.0,
+        "fatigue": 3.0
+      },
+      "expected_risks": [
+        0.07259385258158613,
+        0.13254164728358653,
+        0.2510415662193768
+      ]
+    },
+    {
+      "endpoint_id": "infection",
+      "features": {
+        "igg": 0.3266100472463629,
+        "c3": 1.5845694790032063,
+        "dryness": 5.0,
+        "fatigue": 5.0
+      },
+      "expected_risks": [
+        0.11050514710211112,
+        0.1982305250699894,
+        0.36183946736670947
+      ]
+    },
+    {
+      "endpoint_id": "infection",
+      "features": {
+        "igg": 28.64377855598463,
+        "c3": 2.333832047231174,
+        "dryness": 5.0,
+        "fatigue": 5.0
+      },
+      "expected_risks": [
+        0.04829961061928523,
+        0.08917138589425022,
+        0.17294652995169224
+      ]
+    },
+    {
+      "endpoint_id": "infection",
+      "features": {
+        "igg": 29.141686114576622,
+        "c3": 1.9289326309653374,
+        "dryness": 7.0,
+        "fatigue": 2.0
+      },
+      "expected_risks": [
+        0.03878758417328876,
+        0.07191979766035483,
+        0.1407878352862083
+      ]
+    },
+    {
+      "endpoint_id": "infection",
+      "features": {
+        "igg": 14.004936787365612,
+        "c3": 0.641640466841738,
+        "dryness": 1.0,
+        "fatigue": 7.0
+      },
+      "expected_risks": [
+        0.1193354597234263,
+        0.21318137784350744,
+        0.38579950433347143
+      ]
+    },
+    {
+      "endpoint_id": "infection",
+      "features": {
+        "igg": 23.871783586173226,
+        "c3": 0.05285845777993098,
+        "dryness": 2.0,
+        "fatigue": 4.0
+      },
+      "expected_risks": [
+        0.08031518844253449,
+        0.14611742619787604,
+        0.27467860275492684
+      ]
+    }
+  ]
+}

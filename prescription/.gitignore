@@ -1,0 +1,30 @@
+# Clinical and generated data
+data/raw/
+data/private/
+work/
+outputs/
+*.key
+*.pem
+.env
+.env.*
+!.env.example
+dist/
+build/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Keep reviewed synthetic fixtures
+!data/synthetic/
+!data/synthetic/**

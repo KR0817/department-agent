@@ -1,0 +1,24 @@
+[
+  {
+    "subject_code": "SYN-JSON-01",
+    "episode_code": "E1",
+    "physician_code": "SYN-D1",
+    "visit_code": "V1",
+    "date": "2025-03-01",
+    "sequence": 1,
+    "condition": "SYNTHETIC ONLY",
+    "symptoms": "no dry mouth",
+    "prescription": "黄芪 10g; 白芍 6g"
+  },
+  {
+    "subject_code": "SYN-JSON-01",
+    "episode_code": "E1",
+    "physician_code": "SYN-D2",
+    "visit_code": "V2",
+    "date": "2025-03-08",
+    "sequence": 2,
+    "condition": "SYNTHETIC ONLY",
+    "symptoms": "simulated fatigue",
+    "prescription": "茯苓 剂量不详"
+  }
+]

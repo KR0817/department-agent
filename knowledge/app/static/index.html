@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>循证案头 · 中医风湿科</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">跳到主要内容</a>
+  <div class="shell">
+    <aside class="sidebar" aria-label="工作区导航">
+      <a class="brand" href="/" aria-label="循证案头首页"><span class="brand-mark" aria-hidden="true">证</span><span>循证案头<small>RHEUM EVIDENCE DESK</small></span></a>
+      <p class="department">中医风湿病科 · 本地工作区</p>
+      <nav>
+        <button class="nav-button active" data-view="ask" aria-current="page"><span aria-hidden="true">⌕</span>证据问答</button>
+        <button class="nav-button" data-view="library"><span aria-hidden="true">▤</span>资料库</button>
+        <button class="nav-button" data-view="review"><span aria-hidden="true">☷</span>审核准备</button>
+        <button class="nav-button" data-view="lab"><span aria-hidden="true">⇄</span>引用核查</button>
+        <button class="nav-button" data-view="answer"><span aria-hidden="true">≡</span>回答核查</button>
+      </nav>
+      <div class="side-note"><span class="dot" aria-hidden="true"></span>仅在本机运行<p>问题不会发送给外部模型。<br>请使用通用问题，不录入患者信息。</p></div>
+      <div class="side-footer">工作原型 <span id="app-version">—</span></div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar"><span>科室知识工作台</span><span class="badge pending">资料待临床审核</span></header>
+      <main id="main">
+        <div id="fatal" class="notice error" role="alert" hidden></div>
+        <section id="view-ask" class="view" aria-labelledby="ask-heading">
+          <div class="intro"><p class="eyebrow">从问题找到依据</p><h1 id="ask-heading"><span>每一条结论，</span><span>都能回到原文。</span></h1><p class="lede">查看依据、适用范围与审核状态，保留临床判断所需的上下文。</p></div>
+          <form id="question-form" class="question-box">
+            <label class="field-title" for="question">你想从文献中找到什么？</label>
+            <textarea id="question" name="question" maxlength="1000" rows="3" required aria-describedby="question-help extract-help" placeholder="例如：热痹消研究报告了哪些不良事件？"></textarea>
+            <p id="question-help" class="input-help">请使用通用问题，不录入患者信息。</p>
+            <div id="fulltext-options" class="fulltext-options"><label class="field-title" for="fulltext-source">全文来源</label><select id="fulltext-source" aria-describedby="fulltext-status" disabled><option value="all">正在读取全文目录…</option></select><p id="fulltext-status" class="input-help" role="status">正在读取全文范围…</p><button id="fulltext-reload" class="text-button" type="button">刷新全文目录</button></div>
+            <p id="extract-help" class="input-help">从全文提取原句，以中文展示摘答。外文片段由本地模型翻译，原句与页码或章节可展开核对；仍需判断问题相关性、翻译准确性与临床适用性。</p>
+            <div class="form-footer"><div class="filters"><label for="disease">病种</label><select id="disease"><option value="all">全部病种</option><option value="ra">类风湿关节炎</option><option value="sjd">干燥综合征</option><option value="gout">痛风</option></select><label for="mode" class="sr-only">查询模式</label><select id="mode"><option value="extract" selected>全文中文摘答 · 本地模型</option><option value="reference">查阅资料</option><option value="answer">已审核问答</option></select></div><button class="primary" id="ask-button" type="submit" disabled>从原文中文摘答 <span aria-hidden="true">↗</span></button></div>
+          </form>
+          <div class="examples" aria-label="示例问题"><span>从这里开始</span><button type="button" data-example="ra">类风湿研究</button><button type="button" data-example="sjd">干燥综合征研究</button><button type="button" data-example="gout">痛风研究</button></div>
+          <div class="section-heading"><h2 id="results-heading">中文摘答结果</h2><span id="result-count">等待提问</span></div>
+          <div id="results" aria-live="polite" aria-busy="false"><div class="empty-state"><div class="empty-glyph" aria-hidden="true">文 ↔ 证</div><h3>用中文读答案，回原文核依据</h3><p>选择病种或指定全文，再输入具体问题。<br>中文摘答优先展示，原句、上下文和原文页可展开核对。</p><button class="text-button" type="button" data-view="library">查看登记资料与审核状态 →</button></div></div>
+          <div class="scope-note"><strong>当前范围</strong><p id="scope-summary">正在读取资料范围…</p></div>
+        </section>
+        <section id="view-library" class="view" aria-labelledby="library-heading" hidden>
+          <div class="intro"><p class="eyebrow">保留出处与版本</p><h1 id="library-heading">资料库</h1><p class="lede">查找文献、查看全文获取状态，并选择一篇文献进行中文摘答。文献登记、全文获取与临床审核分别记录。</p></div>
+          <div class="library-overview"><span><b id="source-count">—</b> 登记文献</span><span><b id="fulltext-count">—</b> 已获全文</span><span><b id="indexed-count">—</b> 可用于摘答</span><span><b id="pending-source-count">—</b> 待临床审核</span><span><b id="reviewed-count">—</b> 临床批准</span></div>
+          <div class="library-filters"><div class="library-search"><label for="library-query">检索文献</label><input id="library-query" type="search" maxlength="200" placeholder="中文关键词、原题名、期刊或 PMID / DOI"></div><div><label for="library-disease">病种范围</label><select id="library-disease"><option value="all">全部病种</option><option value="ra">类风湿关节炎</option><option value="sjd">干燥综合征</option><option value="gout">痛风</option></select></div><div><label for="library-tcm">中医药范围</label><select id="library-tcm"><option value="all">全部文献</option><option value="yes">中医药相关</option><option value="no">其他文献</option></select></div><button id="library-reload" class="text-button" type="button">刷新资料库</button></div>
+          <p id="library-status" class="context" role="status" aria-live="polite">正在读取文献登记…</p>
+          <div id="library-list" class="library-list"></div>
+          <nav id="library-pagination" class="library-pagination" aria-label="文献分页" hidden><button id="library-previous" class="text-button" type="button">上一页</button><span id="library-page" aria-live="polite"></span><button id="library-next" class="text-button" type="button">下一页</button></nav>
+          <div class="scope-note"><strong>阅读范围</strong><p>每页展示 20 篇。XML 全文按章节定位，PDF 按原文页定位。已获取全文不代表已核对全部表格、图注、补充材料或更新状态；仅摘要文献不参与全文摘答。治疗结论及临床适用性仍需人工审核，原有临床核查条目单独保留。</p></div>
+        </section>
+        <section id="view-review" class="view" aria-labelledby="review-heading" hidden>
+          <div class="intro"><p class="eyebrow">从登记关联到人工判断</p><h1 id="review-heading">逐条准备，逐项审核。</h1><p class="lede">把结论与具体原文放在一起，判断支持程度、适用条件和仍缺少的上下文。</p></div>
+          <div class="review-toolbar"><div><label for="review-disease">病种范围</label><select id="review-disease"><option value="all">全部病种</option><option value="ra">类风湿关节炎</option><option value="sjd">干燥综合征</option><option value="gout">痛风</option></select></div><a class="primary download-link" href="/api/review-packet" download>导出全部审核包</a></div>
+          <div class="notice">导出内容包含结论、原文、定位及空白审核表。各项均待填写；填写后的文件留作人工工作记录，此版本没有批准或回导入口。</div>
+          <div class="section-heading"><h2>待审依据与现有状态</h2><span id="review-count" aria-live="polite"></span></div>
+          <div id="review-list" class="library-list"></div>
+          <div class="scope-note"><strong>支持性判断</strong><p>区分支持、部分支持、矛盾、上下文不足与无关。每项判断写明理由和原文位置；对不适用的维度说明原因。共识程度与证据确定性分别评价，中医方药需核对具体组成、剂量、证候及联合用药条件。</p></div>
+        </section>
+        <section id="view-lab" class="view" aria-labelledby="lab-heading" hidden>
+          <div class="intro"><p class="eyebrow">检查引用与结论的关联</p><h1 id="lab-heading"><span>真实文献，</span><span>也可能被引用错。</span></h1><p class="lede">替换来源或改写结论，查看哪一步需要阻断，哪一步仍待人工判断。</p></div>
+          <div class="notice">这里检查已登记的结论与原文关联。自由改写的医学含义需要另行审核，程序不会将字面匹配当作语义证明。</div>
+          <form id="check-form" class="lab-form">
+            <div class="two-fields"><div><label for="lab-claim">已登记条目</label><select id="lab-claim"></select></div><div><label for="lab-source">实际引用来源</label><select id="lab-source"></select></div></div>
+            <label for="lab-passage">原文位置</label><select id="lab-passage"></select>
+            <label for="lab-text">待核查的结论</label><textarea id="lab-text" rows="2" maxlength="4000" required></textarea>
+            <label for="lab-quote">所引用的原文片段</label><textarea id="lab-quote" class="quote-input" rows="3" maxlength="20000" required></textarea>
+            <div class="lab-actions"><div class="scenario-buttons"><button type="button" data-scenario="original">原始关联</button><button type="button" data-scenario="swap">换一篇真实文献</button><button type="button" data-scenario="rewrite">扩大结论</button></div><button class="primary" id="check-button" type="submit">检查关联</button></div>
+          </form>
+          <div id="check-results" aria-live="polite"></div>
+        </section>
+        <section id="view-answer" class="view" aria-labelledby="answer-heading" hidden>
+          <div class="intro"><p class="eyebrow">检查整段回答的依据</p><h1 id="answer-heading"><span>引用再多，</span><span>也要逐段核对。</span></h1><p class="lede">粘贴待核查文本，逐段关联具体依据。未关联的段落和需要进一步审核的表述会分别列出。</p></div>
+          <div class="notice">本页按标点与换行拆分文本，尚未提取原子医学结论或运行医学语义支持判断。证据问答中的本地模型用于选择原句和中文翻译，二者均不评价原问题是否回答完整，也不构成临床发布批准。</div>
+          <form id="answer-form" class="lab-form">
+            <label for="answer-text">待核查回答</label><textarea id="answer-text" rows="5" maxlength="8000" required aria-describedby="answer-help"></textarea>
+            <p id="answer-help" class="input-help">仅粘贴通用知识文本，请勿输入患者信息。文本仅用于本次本地核查。</p>
+            <div class="lab-actions"><div><label for="answer-disease">回答病种</label><select id="answer-disease"><option value="all">全部病种</option><option value="ra">类风湿关节炎</option><option value="sjd">干燥综合征</option><option value="gout">痛风</option></select></div><button id="segment-button" class="primary" type="submit">拆分并关联依据</button></div>
+          </form>
+          <div class="examples" aria-label="回答核查示例"><span>演示文本，非诊疗建议</span><button type="button" data-answer-example="registered">登记释义</button><button type="button" data-answer-example="missing">遗漏一句依据</button><button type="button" data-answer-example="swap">引用其他病种文献</button><button type="button" data-answer-example="mixed">混合引用（含登记错配）</button></div>
+          <div id="answer-units" class="library-list" aria-live="polite"></div>
+          <button id="audit-answer-button" class="primary audit-submit" type="button" hidden>核查整段回答</button>
+          <div id="answer-results" aria-live="polite" aria-busy="false"></div>
+        </section>
+      </main>
+      <footer class="bottom-note"><span>来源可追溯 · 状态分别呈现</span><span id="runtime-status">正在连接本地服务…</span></footer>
+    </div>
+  </div>
+  <dialog id="source-dialog" aria-labelledby="source-title"><div class="dialog-top"><span class="eyebrow">原文与来源</span><button id="close-source" class="icon-button" aria-label="关闭原文面板">×</button></div><div id="source-content"></div></dialog>
+</body>
+</html>

@@ -1,0 +1,106 @@
+SJD-SYNTHETIC
+患者编号: SIM-SJD-001
+姓名: 模拟患者甲
+就诊日期: 2026-07-01
+诊断: 干燥综合征
+干燥: 3
+疲劳: 6
+疼痛: 9
+IgG: 18.2 g/L
+C3: 0.82 g/L
+抗SSA: 阳性
+证候: 气阴两虚证
+处方: 黄芪15g，生地黄12g，麦冬10g。
+
+Administrative fixture note 0. No additional measurement.
+Administrative fixture note 1. No additional measurement.
+Administrative fixture note 2. No additional measurement.
+Administrative fixture note 3. No additional measurement.
+Administrative fixture note 4. No additional measurement.
+Administrative fixture note 5. No additional measurement.
+Administrative fixture note 6. No additional measurement.
+Administrative fixture note 7. No additional measurement.
+Administrative fixture note 8. No additional measurement.
+Administrative fixture note 9. No additional measurement.
+Administrative fixture note 10. No additional measurement.
+Administrative fixture note 11. No additional measurement.
+Administrative fixture note 12. No additional measurement.
+Administrative fixture note 13. No additional measurement.
+Administrative fixture note 14. No additional measurement.
+Administrative fixture note 15. No additional measurement.
+Administrative fixture note 16. No additional measurement.
+Administrative fixture note 17. No additional measurement.
+Administrative fixture note 18. No additional measurement.
+Administrative fixture note 19. No additional measurement.
+Administrative fixture note 20. No additional measurement.
+Administrative fixture note 21. No additional measurement.
+Administrative fixture note 22. No additional measurement.
+Administrative fixture note 23. No additional measurement.
+Administrative fixture note 24. No additional measurement.
+Administrative fixture note 25. No additional measurement.
+Administrative fixture note 26. No additional measurement.
+Administrative fixture note 27. No additional measurement.
+Administrative fixture note 28. No additional measurement.
+Administrative fixture note 29. No additional measurement.
+Administrative fixture note 30. No additional measurement.
+Administrative fixture note 31. No additional measurement.
+Administrative fixture note 32. No additional measurement.
+Administrative fixture note 33. No additional measurement.
+Administrative fixture note 34. No additional measurement.
+Administrative fixture note 35. No additional measurement.
+Administrative fixture note 36. No additional measurement.
+Administrative fixture note 37. No additional measurement.
+Administrative fixture note 38. No additional measurement.
+Administrative fixture note 39. No additional measurement.
+Administrative fixture note 40. No additional measurement.
+Administrative fixture note 41. No additional measurement.
+Administrative fixture note 42. No additional measurement.
+Administrative fixture note 43. No additional measurement.
+Administrative fixture note 44. No additional measurement.
+Administrative fixture note 45. No additional measurement.
+Administrative fixture note 46. No additional measurement.
+Administrative fixture note 47. No additional measurement.
+Administrative fixture note 48. No additional measurement.
+Administrative fixture note 49. No additional measurement.
+Administrative fixture note 50. No additional measurement.
+Administrative fixture note 51. No additional measurement.
+Administrative fixture note 52. No additional measurement.
+Administrative fixture note 53. No additional measurement.
+Administrative fixture note 54. No additional measurement.
+Administrative fixture note 55. No additional measurement.
+Administrative fixture note 56. No additional measurement.
+Administrative fixture note 57. No additional measurement.
+Administrative fixture note 58. No additional measurement.
+Administrative fixture note 59. No additional measurement.
+Administrative fixture note 60. No additional measurement.
+Administrative fixture note 61. No additional measurement.
+Administrative fixture note 62. No additional measurement.
+Administrative fixture note 63. No additional measurement.
+Administrative fixture note 64. No additional measurement.
+Administrative fixture note 65. No additional measurement.
+Administrative fixture note 66. No additional measurement.
+Administrative fixture note 67. No additional measurement.
+Administrative fixture note 68. No additional measurement.
+Administrative fixture note 69. No additional measurement.
+Administrative fixture note 70. No additional measurement.
+Administrative fixture note 71. No additional measurement.
+Administrative fixture note 72. No additional measurement.
+Administrative fixture note 73. No additional measurement.
+Administrative fixture note 74. No additional measurement.
+Administrative fixture note 75. No additional measurement.
+Administrative fixture note 76. No additional measurement.
+Administrative fixture note 77. No additional measurement.
+Administrative fixture note 78. No additional measurement.
+Administrative fixture note 79. No additional measurement.
+SJD-SYNTHETIC
+患者编号: SIM-SJD-001
+姓名: 模拟患者甲
+就诊日期: 2026-10-01
+诊断: 干燥综合征
+干燥: 2
+疲劳: 4
+疼痛: 5
+IgG: 16.1 g/L
+C3: 0.91 g/L
+证候: 气阴两虚证
+处方: 黄芪15g，生地黄12g，麦冬12g。

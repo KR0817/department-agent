@@ -1,0 +1,11 @@
+{
+  "schema": "synthetic-knowledge-demo-v1",
+  "data_origin": "synthetic",
+  "clinical_release": false,
+  "source_id": "synthetic-software-review",
+  "title": "SYNTHETIC software review fixture - not clinical evidence",
+  "title_zh": "【合成演示】软件复核示例，非临床文献",
+  "disease": "sjd",
+  "questions": ["这个合成示例如何核对出处？", "How does this synthetic example preserve its source?"],
+  "text": "【合成演示，非临床文献】本示例用于验证来源定位和人工复核界面。核对时应同时查看摘录、来源内容及其文件摘要。本段不包含诊疗建议，也不代表医学证据。"
+}

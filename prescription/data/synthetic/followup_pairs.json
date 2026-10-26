@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "synthetic_mode": true,
+  "periods": ["period_1", "period_2", "period_3"],
+  "patients": [
+    {
+      "patient_code": "SYN-P-0001",
+      "visits": [
+        {"sequence": 1, "day_offset": 0, "period": "period_1", "eligible": true, "items": [
+          {"item_name": "\u767d\u828d", "dose_pairs": [{"value": 10, "unit": "g"}]},
+          {"item_name": "\u9ec4\u82aa", "dose_pairs": [{"value": 15, "unit": "g"}]}]},
+        {"sequence": 2, "day_offset": 14, "period": "period_1", "eligible": true, "items": [
+          {"item_name": "\u767d\u828d", "dose_pairs": [{"value": 15, "unit": "g"}]},
+          {"item_name": "\u5f53\u5f52", "dose_pairs": [{"value": 10, "unit": "g"}]}]},
+        {"sequence": 3, "day_offset": 28, "period": "period_2", "eligible": true, "items": [
+          {"item_name": "\u767d\u828d", "dose_pairs": [{"value": 15, "unit": "G"}]},
+          {"item_name": "\u5f53\u5f52", "dose_pairs": [{"value": 10, "unit": "g"}]}]}
+      ]
+    },
+    {
+      "patient_code": "SYN-P-0002",
+      "visits": [
+        {"sequence": 1, "day_offset": 0, "period": "period_1", "eligible": true, "items": [
+          {"item_name": "\u767d\u828d", "dose_pairs": [{"value": 10, "unit": "g"}]},
+          {"item_name": "\u9ec4\u82aa", "dose_pairs": []},
+          {"item_name": "\u5f53\u5f52", "dose_pairs": [{"value": 5, "unit": "g"}, {"value": 10, "unit": "g"}]},
+          {"item_name": "\u7518\u8349", "dose_pairs": [{"value": 500, "unit": "mg"}]}]},
+        {"sequence": 2, "day_offset": 21, "period": "period_2", "eligible": true, "items": [
+          {"item_name": "\u767d\u828d", "dose_pairs": [{"value": 5, "unit": "g"}]},
+          {"item_name": "\u9ec4\u82aa", "dose_pairs": [{"value": 15, "unit": "g"}]},
+          {"item_name": "\u5f53\u5f52", "dose_pairs": [{"value": 10, "unit": "g"}]},
+          {"item_name": "\u7518\u8349", "dose_pairs": [{"value": 0.5, "unit": "g"}]}]}
+      ]
+    },
+    {
+      "patient_code": "SYN-P-0003",
+      "visits": [
+        {"sequence": 1, "day_offset": 0, "period": "period_1", "eligible": true, "items": [
+          {"item_name": "\u767d\u828d", "dose_pairs": [{"value": 10, "unit": "g"}]}]},
+        {"sequence": 2, "day_offset": 0, "period": "period_1", "eligible": true, "items": [
+          {"item_name": "\u767d\u828d", "dose_pairs": [{"value": 15, "unit": "g"}]}]},
+        {"sequence": 3, "day_offset": 14, "period": "period_1", "eligible": true, "items": [
+          {"item_name": "\u767d\u828d", "dose_pairs": [{"value": 15, "unit": "g"}]}]},
+        {"sequence": 4, "day_offset": 28, "period": "period_2", "eligible": false, "items": []},
+        {"sequence": 5, "day_offset": 42, "period": "period_2", "eligible": true, "items": [
+          {"item_name": "\u5f53\u5f52", "dose_pairs": [{"value": 10, "unit": "g"}]}]}
+      ]
+    }
+  ]
+}

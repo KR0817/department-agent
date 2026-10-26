@@ -1,0 +1,1154 @@
+{
+  "schema_version": "mingyirx-inheritance-v1",
+  "dataset_id": "SYNTHETIC-INHERITANCE",
+  "revision": 1,
+  "parent_sha256": null,
+  "synthetic": true,
+  "local_authorization": false,
+  "deidentified": true,
+  "vocabulary": {
+    "conditions": [
+      {
+        "code": "SYN_FATIGUE",
+        "label": "合成疲乏记录"
+      }
+    ],
+    "symptoms": [
+      {
+        "code": "FATIGUE",
+        "label": "乏力"
+      },
+      {
+        "code": "DRY_MOUTH",
+        "label": "口干"
+      },
+      {
+        "code": "SLEEP_POOR",
+        "label": "睡眠欠佳"
+      }
+    ],
+    "tongues": [
+      {
+        "code": "PALE",
+        "label": "舌淡"
+      },
+      {
+        "code": "RED",
+        "label": "舌红"
+      }
+    ],
+    "pulses": [
+      {
+        "code": "WEAK",
+        "label": "脉弱"
+      },
+      {
+        "code": "THIN",
+        "label": "脉细"
+      }
+    ],
+    "syndromes": [
+      {
+        "code": "QI_DEF",
+        "label": "气虚记录"
+      },
+      {
+        "code": "QI_YIN_DEF",
+        "label": "气阴两虚记录"
+      }
+    ],
+    "principles": [
+      {
+        "code": "SUPPORT_QI",
+        "label": "益气治则记录"
+      }
+    ],
+    "contexts": [
+      {
+        "code": "REST_RECORDED",
+        "label": "休息情况已记录"
+      },
+      {
+        "code": "ACTIVITY_RECORDED",
+        "label": "活动情况已记录"
+      }
+    ],
+    "outcomes": [
+      {
+        "code": "UNKNOWN",
+        "label": "后续结果未记录"
+      },
+      {
+        "code": "SYN_CHANGE",
+        "label": "合成后续观察"
+      }
+    ],
+    "medicines": [
+      {
+        "code": "HUANGQI",
+        "label": "黄芪"
+      },
+      {
+        "code": "BAISHAO",
+        "label": "白芍"
+      },
+      {
+        "code": "FULING",
+        "label": "茯苓"
+      },
+      {
+        "code": "CHENPI",
+        "label": "陈皮"
+      },
+      {
+        "code": "MAIDONG",
+        "label": "麦冬"
+      }
+    ]
+  },
+  "reviewers": [
+    {
+      "reviewer_id": "R-SYN-01",
+      "label": "合成审阅者"
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "SRC-SYN-A",
+      "kind": "teaching_note",
+      "sha256": "db76dacacc6a629d35b0c9875eee005c6f8e6df81ed865b324f6e7edff3071dd",
+      "review_status": "confirmed",
+      "reviewer_id": "R-SYN-01"
+    },
+    {
+      "source_id": "SRC-SYN-B",
+      "kind": "teaching_note",
+      "sha256": "06ed9d5d1029b3beeba35a11c5e08a106ac44a95be1bf24db084015a6366bdae",
+      "review_status": "confirmed",
+      "reviewer_id": "R-SYN-01"
+    },
+    {
+      "source_id": "SRC-SYN-C",
+      "kind": "teaching_note",
+      "sha256": "2af02fb3081e80385163e8d6dcc15c3952062bf8d75d03e3c3018095f0a4960c",
+      "review_status": "pending",
+      "reviewer_id": null
+    }
+  ],
+  "physicians": [
+    {
+      "physician_id": "P-SYN-A",
+      "label": "合成示例医师A",
+      "source_ids": [
+        "SRC-SYN-A"
+      ],
+      "review_status": "confirmed",
+      "reviewer_id": "R-SYN-01"
+    },
+    {
+      "physician_id": "P-SYN-B",
+      "label": "合成示例医师B",
+      "source_ids": [
+        "SRC-SYN-B"
+      ],
+      "review_status": "confirmed",
+      "reviewer_id": "R-SYN-01"
+    },
+    {
+      "physician_id": "P-SYN-C",
+      "label": "合成示例医师C",
+      "source_ids": [
+        "SRC-SYN-C"
+      ],
+      "review_status": "pending",
+      "reviewer_id": null
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "C-SYN-01",
+      "subject_id": "S-SYN-01",
+      "physician_id": "P-SYN-A",
+      "source_id": "SRC-SYN-A",
+      "condition_codes": [
+        "SYN_FATIGUE"
+      ],
+      "visits": [
+        {
+          "visit_id": "V-1",
+          "sequence": 1,
+          "offset_days": 0,
+          "order_known": true,
+          "pre": {
+            "symptoms": [
+              {
+                "code": "FATIGUE",
+                "severity": 2
+              },
+              {
+                "code": "DRY_MOUTH",
+                "severity": null
+              }
+            ],
+            "tongue_codes": [
+              "PALE"
+            ],
+            "pulse_codes": [
+              "WEAK"
+            ],
+            "syndrome_codes": [
+              "QI_DEF"
+            ],
+            "principle_codes": [
+              "SUPPORT_QI"
+            ],
+            "context_codes": [
+              "REST_RECORDED"
+            ]
+          },
+          "prescription": [
+            {
+              "medicine_code": "HUANGQI",
+              "dose": 15,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "BAISHAO",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "FULING",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            }
+          ],
+          "outcome_codes": [
+            "UNKNOWN"
+          ]
+        },
+        {
+          "visit_id": "V-2",
+          "sequence": 2,
+          "offset_days": 14,
+          "order_known": true,
+          "pre": {
+            "symptoms": [
+              {
+                "code": "FATIGUE",
+                "severity": 1
+              },
+              {
+                "code": "DRY_MOUTH",
+                "severity": null
+              }
+            ],
+            "tongue_codes": [
+              "PALE"
+            ],
+            "pulse_codes": [
+              "WEAK"
+            ],
+            "syndrome_codes": [
+              "QI_DEF"
+            ],
+            "principle_codes": [
+              "SUPPORT_QI"
+            ],
+            "context_codes": [
+              "REST_RECORDED"
+            ]
+          },
+          "prescription": [
+            {
+              "medicine_code": "HUANGQI",
+              "dose": 20,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "BAISHAO",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "FULING",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "CHENPI",
+              "dose": 6,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            }
+          ],
+          "outcome_codes": [
+            "SYN_CHANGE"
+          ]
+        },
+        {
+          "visit_id": "V-3",
+          "sequence": 3,
+          "offset_days": 28,
+          "order_known": true,
+          "pre": {
+            "symptoms": [
+              {
+                "code": "FATIGUE",
+                "severity": null
+              },
+              {
+                "code": "DRY_MOUTH",
+                "severity": null
+              }
+            ],
+            "tongue_codes": [
+              "PALE"
+            ],
+            "pulse_codes": [
+              "WEAK"
+            ],
+            "syndrome_codes": [
+              "QI_DEF"
+            ],
+            "principle_codes": [
+              "SUPPORT_QI"
+            ],
+            "context_codes": [
+              "REST_RECORDED"
+            ]
+          },
+          "prescription": [
+            {
+              "medicine_code": "HUANGQI",
+              "dose": null,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "BAISHAO",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "FULING",
+              "dose": 12,
+              "unit": "unknown",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "CHENPI",
+              "dose": 6,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            }
+          ],
+          "outcome_codes": [
+            "UNKNOWN"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "C-SYN-02",
+      "subject_id": "S-SYN-01",
+      "physician_id": "P-SYN-A",
+      "source_id": "SRC-SYN-A",
+      "condition_codes": [
+        "SYN_FATIGUE"
+      ],
+      "visits": [
+        {
+          "visit_id": "V-1",
+          "sequence": 1,
+          "offset_days": 0,
+          "order_known": true,
+          "pre": {
+            "symptoms": [
+              {
+                "code": "FATIGUE",
+                "severity": 2
+              },
+              {
+                "code": "DRY_MOUTH",
+                "severity": null
+              }
+            ],
+            "tongue_codes": [
+              "PALE"
+            ],
+            "pulse_codes": [
+              "WEAK"
+            ],
+            "syndrome_codes": [
+              "QI_DEF"
+            ],
+            "principle_codes": [
+              "SUPPORT_QI"
+            ],
+            "context_codes": [
+              "REST_RECORDED"
+            ]
+          },
+          "prescription": [
+            {
+              "medicine_code": "HUANGQI",
+              "dose": 15,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "BAISHAO",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "FULING",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            }
+          ],
+          "outcome_codes": [
+            "UNKNOWN"
+          ]
+        },
+        {
+          "visit_id": "V-2",
+          "sequence": 2,
+          "offset_days": 21,
+          "order_known": true,
+          "pre": {
+            "symptoms": [
+              {
+                "code": "FATIGUE",
+                "severity": 2
+              },
+              {
+                "code": "DRY_MOUTH",
+                "severity": null
+              }
+            ],
+            "tongue_codes": [
+              "PALE"
+            ],
+            "pulse_codes": [
+              "WEAK"
+            ],
+            "syndrome_codes": [
+              "QI_DEF"
+            ],
+            "principle_codes": [
+              "SUPPORT_QI"
+            ],
+            "context_codes": [
+              "REST_RECORDED"
+            ]
+          },
+          "prescription": [
+            {
+              "medicine_code": "HUANGQI",
+              "dose": 15,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "BAISHAO",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "FULING",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            }
+          ],
+          "outcome_codes": [
+            "UNKNOWN"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "C-SYN-03",
+      "subject_id": "S-SYN-02",
+      "physician_id": "P-SYN-B",
+      "source_id": "SRC-SYN-B",
+      "condition_codes": [
+        "SYN_FATIGUE"
+      ],
+      "visits": [
+        {
+          "visit_id": "V-1",
+          "sequence": 1,
+          "offset_days": 0,
+          "order_known": false,
+          "pre": {
+            "symptoms": [
+              {
+                "code": "FATIGUE",
+                "severity": 2
+              },
+              {
+                "code": "DRY_MOUTH",
+                "severity": null
+              }
+            ],
+            "tongue_codes": [
+              "PALE"
+            ],
+            "pulse_codes": [
+              "WEAK"
+            ],
+            "syndrome_codes": [
+              "QI_DEF"
+            ],
+            "principle_codes": [
+              "SUPPORT_QI"
+            ],
+            "context_codes": [
+              "REST_RECORDED"
+            ]
+          },
+          "prescription": [
+            {
+              "medicine_code": "HUANGQI",
+              "dose": 15,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "BAISHAO",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "FULING",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            }
+          ],
+          "outcome_codes": [
+            "UNKNOWN"
+          ]
+        },
+        {
+          "visit_id": "V-2",
+          "sequence": 2,
+          "offset_days": 0,
+          "order_known": false,
+          "pre": {
+            "symptoms": [
+              {
+                "code": "FATIGUE",
+                "severity": 2
+              },
+              {
+                "code": "DRY_MOUTH",
+                "severity": null
+              }
+            ],
+            "tongue_codes": [
+              "PALE"
+            ],
+            "pulse_codes": [
+              "WEAK"
+            ],
+            "syndrome_codes": [
+              "QI_DEF"
+            ],
+            "principle_codes": [
+              "SUPPORT_QI"
+            ],
+            "context_codes": [
+              "REST_RECORDED"
+            ]
+          },
+          "prescription": [
+            {
+              "medicine_code": "HUANGQI",
+              "dose": 20,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "BAISHAO",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "FULING",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "CHENPI",
+              "dose": 6,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            }
+          ],
+          "outcome_codes": [
+            "UNKNOWN"
+          ]
+        },
+        {
+          "visit_id": "V-3",
+          "sequence": 3,
+          "offset_days": 7,
+          "order_known": true,
+          "pre": {
+            "symptoms": [
+              {
+                "code": "FATIGUE",
+                "severity": 2
+              },
+              {
+                "code": "DRY_MOUTH",
+                "severity": null
+              }
+            ],
+            "tongue_codes": [
+              "PALE"
+            ],
+            "pulse_codes": [
+              "WEAK"
+            ],
+            "syndrome_codes": [
+              "QI_DEF"
+            ],
+            "principle_codes": [
+              "SUPPORT_QI"
+            ],
+            "context_codes": [
+              "REST_RECORDED"
+            ]
+          },
+          "prescription": [
+            {
+              "medicine_code": "HUANGQI",
+              "dose": 15,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "BAISHAO",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "FULING",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            }
+          ],
+          "outcome_codes": [
+            "UNKNOWN"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "C-SYN-04",
+      "subject_id": "S-SYN-03",
+      "physician_id": "P-SYN-B",
+      "source_id": "SRC-SYN-B",
+      "condition_codes": [
+        "SYN_FATIGUE"
+      ],
+      "visits": [
+        {
+          "visit_id": "V-1",
+          "sequence": 1,
+          "offset_days": 0,
+          "order_known": true,
+          "pre": {
+            "symptoms": [
+              {
+                "code": "FATIGUE",
+                "severity": 2
+              },
+              {
+                "code": "DRY_MOUTH",
+                "severity": null
+              },
+              {
+                "code": "SLEEP_POOR",
+                "severity": 2
+              }
+            ],
+            "tongue_codes": [
+              "RED"
+            ],
+            "pulse_codes": [
+              "THIN"
+            ],
+            "syndrome_codes": [
+              "QI_DEF"
+            ],
+            "principle_codes": [
+              "SUPPORT_QI"
+            ],
+            "context_codes": [
+              "ACTIVITY_RECORDED"
+            ]
+          },
+          "prescription": [
+            {
+              "medicine_code": "HUANGQI",
+              "dose": 15,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "BAISHAO",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "FULING",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            }
+          ],
+          "outcome_codes": [
+            "UNKNOWN"
+          ]
+        },
+        {
+          "visit_id": "V-2",
+          "sequence": 2,
+          "offset_days": 14,
+          "order_known": true,
+          "pre": {
+            "symptoms": [
+              {
+                "code": "FATIGUE",
+                "severity": 3
+              },
+              {
+                "code": "DRY_MOUTH",
+                "severity": null
+              },
+              {
+                "code": "SLEEP_POOR",
+                "severity": 2
+              }
+            ],
+            "tongue_codes": [
+              "RED"
+            ],
+            "pulse_codes": [
+              "THIN"
+            ],
+            "syndrome_codes": [
+              "QI_YIN_DEF"
+            ],
+            "principle_codes": [
+              "SUPPORT_QI"
+            ],
+            "context_codes": [
+              "ACTIVITY_RECORDED"
+            ]
+          },
+          "prescription": [
+            {
+              "medicine_code": "HUANGQI",
+              "dose": 10,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "granule",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "BAISHAO",
+              "dose": 12000,
+              "unit": "mg",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "MAIDONG",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            }
+          ],
+          "outcome_codes": [
+            "UNKNOWN"
+          ]
+        },
+        {
+          "visit_id": "V-3",
+          "sequence": 3,
+          "offset_days": 28,
+          "order_known": true,
+          "pre": {
+            "symptoms": [
+              {
+                "code": "FATIGUE",
+                "severity": 3
+              },
+              {
+                "code": "DRY_MOUTH",
+                "severity": null
+              },
+              {
+                "code": "SLEEP_POOR",
+                "severity": 2
+              }
+            ],
+            "tongue_codes": [
+              "RED"
+            ],
+            "pulse_codes": [
+              "THIN"
+            ],
+            "syndrome_codes": [
+              "QI_DEF"
+            ],
+            "principle_codes": [
+              "SUPPORT_QI"
+            ],
+            "context_codes": [
+              "ACTIVITY_RECORDED"
+            ]
+          },
+          "prescription": [
+            {
+              "medicine_code": "HUANGQI",
+              "dose": 10,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "granule",
+              "preparation": "unknown"
+            },
+            {
+              "medicine_code": "BAISHAO",
+              "dose": 12000,
+              "unit": "mg",
+              "basis": "unknown",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "MAIDONG",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            }
+          ],
+          "outcome_codes": [
+            "UNKNOWN"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "C-SYN-05",
+      "subject_id": "S-SYN-04",
+      "physician_id": "P-SYN-C",
+      "source_id": "SRC-SYN-C",
+      "condition_codes": [
+        "SYN_FATIGUE"
+      ],
+      "visits": [
+        {
+          "visit_id": "V-1",
+          "sequence": 1,
+          "offset_days": 0,
+          "order_known": true,
+          "pre": {
+            "symptoms": [
+              {
+                "code": "FATIGUE",
+                "severity": 2
+              },
+              {
+                "code": "SLEEP_POOR",
+                "severity": null
+              }
+            ],
+            "tongue_codes": [
+              "PALE"
+            ],
+            "pulse_codes": [
+              "WEAK"
+            ],
+            "syndrome_codes": [
+              "QI_DEF"
+            ],
+            "principle_codes": [
+              "SUPPORT_QI"
+            ],
+            "context_codes": [
+              "ACTIVITY_RECORDED"
+            ]
+          },
+          "prescription": [
+            {
+              "medicine_code": "HUANGQI",
+              "dose": 15,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "BAISHAO",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "FULING",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            }
+          ],
+          "outcome_codes": [
+            "UNKNOWN"
+          ]
+        },
+        {
+          "visit_id": "V-2",
+          "sequence": 2,
+          "offset_days": 14,
+          "order_known": true,
+          "pre": {
+            "symptoms": [
+              {
+                "code": "FATIGUE",
+                "severity": 2
+              },
+              {
+                "code": "SLEEP_POOR",
+                "severity": null
+              }
+            ],
+            "tongue_codes": [
+              "PALE"
+            ],
+            "pulse_codes": [
+              "WEAK"
+            ],
+            "syndrome_codes": [
+              "QI_DEF"
+            ],
+            "principle_codes": [
+              "SUPPORT_QI"
+            ],
+            "context_codes": [
+              "ACTIVITY_RECORDED"
+            ]
+          },
+          "prescription": [
+            {
+              "medicine_code": "HUANGQI",
+              "dose": 20,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "BAISHAO",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "FULING",
+              "dose": 12,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            },
+            {
+              "medicine_code": "CHENPI",
+              "dose": 6,
+              "unit": "g",
+              "basis": "per_day",
+              "formulation": "decoction",
+              "preparation": "饮片"
+            }
+          ],
+          "outcome_codes": [
+            "UNKNOWN"
+          ]
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "annotation_id": "A-SYN-01",
+      "case_id": "C-SYN-01",
+      "visit_id": "V-2",
+      "author_id": "R-SYN-01",
+      "origin": "retrospective",
+      "statement": "合成示例：记录乏力程度与黄芪剂量调整并列出现。",
+      "source_id": "SRC-SYN-A",
+      "source_sha256": "db76dacacc6a629d35b0c9875eee005c6f8e6df81ed865b324f6e7edff3071dd",
+      "status": "approved",
+      "reviewer_id": "R-SYN-01"
+    },
+    {
+      "annotation_id": "A-SYN-02",
+      "case_id": "C-SYN-01",
+      "visit_id": "V-3",
+      "author_id": "R-SYN-01",
+      "origin": "algorithm",
+      "statement": "合成算法假说：未知剂量需原始记录复核。",
+      "source_id": "SRC-SYN-A",
+      "source_sha256": "db76dacacc6a629d35b0c9875eee005c6f8e6df81ed865b324f6e7edff3071dd",
+      "status": "approved",
+      "reviewer_id": "R-SYN-01"
+    },
+    {
+      "annotation_id": "A-SYN-03",
+      "case_id": "C-SYN-05",
+      "visit_id": "V-2",
+      "author_id": "R-SYN-01",
+      "origin": "retrospective",
+      "statement": "合成待审来源的教学笔记。",
+      "source_id": "SRC-SYN-C",
+      "source_sha256": "2af02fb3081e80385163e8d6dcc15c3952062bf8d75d03e3c3018095f0a4960c",
+      "status": "draft",
+      "reviewer_id": null
+    }
+  ],
+  "experiences": [
+    {
+      "experience_id": "E-SYN-01",
+      "title": "合成乏力记录的复诊对照",
+      "condition_codes": [
+        "SYN_FATIGUE"
+      ],
+      "syndrome_codes": [
+        "QI_DEF"
+      ],
+      "principle_codes": [
+        "SUPPORT_QI"
+      ],
+      "statement": "合成教学经验：对照乏力记录与处方变化。",
+      "scope_note": "全部病例和数值均为虚构，用于软件流程示例。",
+      "exception_note": "合成例外包含乏力加重与剂型改变，未作疗效判定。",
+      "supporting_pairs": [
+        {
+          "case_id": "C-SYN-01",
+          "from_visit_id": "V-1",
+          "to_visit_id": "V-2"
+        },
+        {
+          "case_id": "C-SYN-02",
+          "from_visit_id": "V-1",
+          "to_visit_id": "V-2"
+        }
+      ],
+      "exception_pairs": [
+        {
+          "case_id": "C-SYN-04",
+          "from_visit_id": "V-1",
+          "to_visit_id": "V-2"
+        }
+      ],
+      "annotation_ids": [
+        "A-SYN-01"
+      ],
+      "status": "approved",
+      "reviewer_id": "R-SYN-01"
+    }
+  ]
+}

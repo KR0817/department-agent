@@ -1,0 +1,19 @@
+{
+  "library_root": "third_party/threeui/local-community",
+  "repository": "https://github.com/MengTo/threeui",
+  "commit": "68802d5428071ada5c20db8094b1649e6bb770ed",
+  "package_version": "1.2.0",
+  "license": "MIT",
+  "selected_export": "RectangleButtons",
+  "selected_surfaces": [
+    "Aster glass edges and sheen",
+    "Meridian keycap and Tideform outline references"
+  ],
+  "source_sha256": {
+    "src/shaders/rectangle-buttons/RectangleButtons.tsx": "f4f3dd8422cd20a464d3d41bbdb9595aeed6beee1efd504754f20a8c2a7de1b0",
+    "LICENSE": "b2a071ba22fefd803f4e9d1f5c777dd79c62d191695586a1a73fd4d0ebd051c6"
+  },
+  "runtime": "Native HTML/CSS adaptation; reference TSX is never executed. No React, remote imports, assets or CDN.",
+  "semantic_group_behavior": "Local progressive enhancement; not an upstream segmented component.",
+  "verification": "The original local provenance recorded catalog.py verification of RectangleButtons: 19 files, 0 mismatches. Historical local logs are not distributed. The selected source hashes are retained above."
+}

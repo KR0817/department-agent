@@ -1,0 +1,24 @@
+[project]
+name = "department-agent"
+version = "0.1.0"
+description = "Local clinical review, evidence provenance and prescription analytics workbench"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "AGPL-3.0-only"
+authors = [{name = "Xinbo Yu"}]
+dependencies = [
+  "fastapi==0.143.0",
+  "starlette==1.8.0",
+  "uvicorn==0.54.0",
+  "httpx==0.28.1",
+  "pypdf==6.20.1",
+  "pillow==12.3.0",
+  "python-multipart==0.0.32",
+  "openpyxl==3.1.5",
+]
+
+[tool.uv]
+package = false
+
+[dependency-groups]
+dev = []

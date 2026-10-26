@@ -1,0 +1,5 @@
+# SJD-SYNTHETIC
+patient_id,name,visit_date,code,value,unit
+SIM-SJD-002,模拟患者乙,2026-10-02,igg,19.4,g/L
+SIM-SJD-002,模拟患者乙,2026-10-02,c3,0.79,g/L
+SIM-SJD-002,模拟患者乙,2026-10-02,c4,0.11,g/L

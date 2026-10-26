@@ -1,0 +1,408 @@
+{
+  "synthetic": true,
+  "cohort_id": "sjd-overview-demo-20-v1",
+  "as_of": "2026-10-23",
+  "source_note": "完全虚构的界面演示资料",
+  "patients": [
+    {
+      "id": "SIM-OV20-001",
+      "name": "模拟患者01",
+      "enrolled_at": "2026-07-01",
+      "first_followup": {
+        "due_date": "2026-09-29",
+        "evidence_visit_id": "SIM-VISIT-001-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-001-B",
+          "date": "2026-07-01",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        },
+        {
+          "id": "SIM-VISIT-001-F1",
+          "date": "2026-10-01",
+          "kind": "first_followup",
+          "source_label": "合成随访记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-002",
+      "name": "模拟患者02",
+      "enrolled_at": "2026-07-02",
+      "first_followup": {
+        "due_date": "2026-09-30",
+        "evidence_visit_id": "SIM-VISIT-002-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-002-B",
+          "date": "2026-07-02",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        },
+        {
+          "id": "SIM-VISIT-002-F1",
+          "date": "2026-10-02",
+          "kind": "first_followup",
+          "source_label": "合成随访记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-003",
+      "name": "模拟患者03",
+      "enrolled_at": "2026-07-03",
+      "first_followup": {
+        "due_date": "2026-10-01",
+        "evidence_visit_id": "SIM-VISIT-003-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-003-B",
+          "date": "2026-07-03",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        },
+        {
+          "id": "SIM-VISIT-003-F1",
+          "date": "2026-10-03",
+          "kind": "first_followup",
+          "source_label": "合成随访记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-004",
+      "name": "模拟患者04",
+      "enrolled_at": "2026-07-04",
+      "first_followup": {
+        "due_date": "2026-10-02",
+        "evidence_visit_id": "SIM-VISIT-004-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-004-B",
+          "date": "2026-07-04",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        },
+        {
+          "id": "SIM-VISIT-004-F1",
+          "date": "2026-10-04",
+          "kind": "first_followup",
+          "source_label": "合成随访记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-005",
+      "name": "模拟患者05",
+      "enrolled_at": "2026-07-05",
+      "first_followup": {
+        "due_date": "2026-10-03",
+        "evidence_visit_id": "SIM-VISIT-005-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-005-B",
+          "date": "2026-07-05",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        },
+        {
+          "id": "SIM-VISIT-005-F1",
+          "date": "2026-10-05",
+          "kind": "first_followup",
+          "source_label": "合成随访记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-006",
+      "name": "模拟患者06",
+      "enrolled_at": "2026-07-06",
+      "first_followup": {
+        "due_date": "2026-10-04",
+        "evidence_visit_id": "SIM-VISIT-006-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-006-B",
+          "date": "2026-07-06",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        },
+        {
+          "id": "SIM-VISIT-006-F1",
+          "date": "2026-10-06",
+          "kind": "first_followup",
+          "source_label": "合成随访记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-007",
+      "name": "模拟患者07",
+      "enrolled_at": "2026-07-07",
+      "first_followup": {
+        "due_date": "2026-10-05",
+        "evidence_visit_id": "SIM-VISIT-007-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-007-B",
+          "date": "2026-07-07",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        },
+        {
+          "id": "SIM-VISIT-007-F1",
+          "date": "2026-10-07",
+          "kind": "first_followup",
+          "source_label": "合成随访记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-008",
+      "name": "模拟患者08",
+      "enrolled_at": "2026-07-08",
+      "first_followup": {
+        "due_date": "2026-10-06",
+        "evidence_visit_id": "SIM-VISIT-008-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-008-B",
+          "date": "2026-07-08",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        },
+        {
+          "id": "SIM-VISIT-008-F1",
+          "date": "2026-10-08",
+          "kind": "first_followup",
+          "source_label": "合成随访记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-009",
+      "name": "模拟患者09",
+      "enrolled_at": "2026-07-09",
+      "first_followup": {
+        "due_date": "2026-10-07",
+        "evidence_visit_id": "SIM-VISIT-009-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-009-B",
+          "date": "2026-07-09",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        },
+        {
+          "id": "SIM-VISIT-009-F1",
+          "date": "2026-10-09",
+          "kind": "first_followup",
+          "source_label": "合成随访记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-010",
+      "name": "模拟患者10",
+      "enrolled_at": "2026-07-10",
+      "first_followup": {
+        "due_date": "2026-10-08",
+        "evidence_visit_id": "SIM-VISIT-010-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-010-B",
+          "date": "2026-07-10",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        },
+        {
+          "id": "SIM-VISIT-010-F1",
+          "date": "2026-10-10",
+          "kind": "first_followup",
+          "source_label": "合成随访记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-011",
+      "name": "模拟患者11",
+      "enrolled_at": "2026-06-27",
+      "first_followup": {
+        "due_date": "2026-09-25",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-011-B",
+          "date": "2026-06-27",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-012",
+      "name": "模拟患者12",
+      "enrolled_at": "2026-07-03",
+      "first_followup": {
+        "due_date": "2026-10-01",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-012-B",
+          "date": "2026-07-03",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-013",
+      "name": "模拟患者13",
+      "enrolled_at": "2026-07-09",
+      "first_followup": {
+        "due_date": "2026-10-07",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-013-B",
+          "date": "2026-07-09",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-014",
+      "name": "模拟患者14",
+      "enrolled_at": "2026-07-21",
+      "first_followup": {
+        "due_date": "2026-10-19",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-014-B",
+          "date": "2026-07-21",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-015",
+      "name": "模拟患者15",
+      "enrolled_at": "2026-07-24",
+      "first_followup": {
+        "due_date": "2026-10-22",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-015-B",
+          "date": "2026-07-24",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-016",
+      "name": "模拟患者16",
+      "enrolled_at": "2026-07-28",
+      "first_followup": {
+        "due_date": "2026-10-26",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-016-B",
+          "date": "2026-07-28",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-017",
+      "name": "模拟患者17",
+      "enrolled_at": "2026-07-31",
+      "first_followup": {
+        "due_date": "2026-10-29",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-017-B",
+          "date": "2026-07-31",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-018",
+      "name": "模拟患者18",
+      "enrolled_at": "2026-08-22",
+      "first_followup": {
+        "due_date": "2026-11-20",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-018-B",
+          "date": "2026-08-22",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-019",
+      "name": "模拟患者19",
+      "enrolled_at": "2026-08-25",
+      "first_followup": {
+        "due_date": "2026-11-23",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-019-B",
+          "date": "2026-08-25",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        }
+      ]
+    },
+    {
+      "id": "SIM-OV20-020",
+      "name": "模拟患者20",
+      "enrolled_at": "2026-08-28",
+      "first_followup": {
+        "due_date": "2026-11-26",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-020-B",
+          "date": "2026-08-28",
+          "kind": "baseline",
+          "source_label": "合成入组记录"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "project_id": "MINGYIRX_LOCAL_IMPORT",
+  "dataset_id": "USER_SUPPLIED_LOCAL_RX",
+  "cohort_version": "v3.0.0-strict-plus-comorbidity-demographic-views",
+  "encoding": "gb18030",
+  "synthetic_mode": false,
+  "min_public_n": 10,
+  "exclusive_groups": true,
+  "cross_file_overlap_policy": "max_multiplicity",
+  "require_visit_group_match": true,
+  "early_end_year": 2019,
+  "temporal_cutpoints": [
+    2018,
+    2019,
+    2020,
+    2021
+  ],
+  "core_prevalence": 0.2,
+  "date_formats": [
+    "%Y/%m/%d %H:%M:%S",
+    "%Y/%m/%d"
+  ],
+  "expected_input_sha256": {},
+  "columns": {
+    "patient_id": 3,
+    "visit_id": 4,
+    "visit_date": 4,
+    "birth_date": 5,
+    "sex": 6,
+    "diagnosis_text": 8,
+    "item_name": 11,
+    "dose": 15,
+    "unit": 16
+  },
+  "item_eligibility": {
+    "allowed_units": [
+      "g"
+    ],
+    "excluded_exact_names": [
+      "\u5e15\u592b\u6797"
+    ],
+    "excluded_name_patterns": [
+      "\u80a0\u6eb6\u7247|\u7f13\u91ca\u7247|\u5206\u6563\u7247|\u80f6\u56ca|\u9897\u7c92|\u4e38|\u53e3\u670d\u6db2|\u6ce8\u5c04|\u6ef4\u773c\u6db2|\u4e73\u818f|\u8f6f\u818f|\u8d34|\u55b7\u96fe|\u6eb6\u6db2|\u6df7\u60ac|\u7cd6\u6d46|\u6813|\u5438\u5165|\u9499\u5c14\u5947|D600"
+    ]
+  },
+  "item_normalization": {
+    "version": "source-string-v1",
+    "dictionary_path": null,
+    "expected_sha256": null
+  },
+  "matched_reference": {
+    "enabled": true,
+    "assume_single_physician": true,
+    "random_seed": 20260822,
+    "bootstrap_replicates": 5000,
+    "null_replicates": 2000
+  },
+  "combination_analysis": {
+    "enabled": true,
+    "sizes": [
+      2,
+      3
+    ],
+    "stability_probability": 0.8
+  },
+  "network_analysis": {
+    "enabled": true,
+    "primary_cosine": 0.5,
+    "node_prevalence_thresholds": [
+      0.15,
+      0.2,
+      0.25
+    ],
+    "edge_cosine_thresholds": [
+      0.4,
+      0.5,
+      0.6
+    ],
+    "stability_probability": 0.8
+  },
+  "clinical_phenotype_analysis": {
+    "enabled": true,
+    "other_exclude_patterns": [
+      "\u7cfb\u7edf\u6027\u7ea2\u6591\u72fc\u75ae|\u7ea2\u6591\u72fc\u75ae|systemic\\s*lupus|\\bSLE\\b|\u7cfb\u7edf\u6027\u786c\u5316(?:\u75c7)?|\u786c\u76ae\u75c5|systemic\\s*sclerosis|scleroderma|\u591a\u53d1\u6027\u808c\u708e|\u76ae\u808c\u708e|\u6297\u5408\u6210\u9176\u7efc\u5408\u5f81|\u514d\u75ab\u4ecb\u5bfc\u574f\u6b7b\u6027\u808c\u75c5|polymyositis|dermatomyositis|antisynthetase|\u6df7\u5408\u6027?\u7ed3\u7f14\u7ec4\u7ec7\u75c5|\u672a\u5206\u5316\u7ed3\u7f14\u7ec4\u7ec7\u75c5|\u7ed3\u7f14\u7ec4\u7ec7\u75c5|mixed\\s*connective\\s*tissue|undifferentiated\\s*connective\\s*tissue|\\bMCTD\\b|\\bUCTD\\b|\\bCTD\\b|\u6297\u78f7\u8102\u7efc\u5408\u5f81|antiphospholipid\\s*syndrome|\\bAPS\\b|\u91cd\u53e0\u7efc\u5408\u5f81|overlap\\s*syndrome"
+    ],
+    "sex_categories": [
+      {
+        "name": "female",
+        "label": "\u5973\u6027",
+        "source_values": [
+          "F"
+        ]
+      },
+      {
+        "name": "male",
+        "label": "\u7537\u6027",
+        "source_values": [
+          "M"
+        ]
+      }
+    ],
+    "age_bands": [
+      {
+        "name": "under_40",
+        "label": "\uff1c40\u5c81",
+        "min_age": 0,
+        "max_age": 39
+      },
+      {
+        "name": "40_59",
+        "label": "40\u201359\u5c81",
+        "min_age": 40,
+        "max_age": 59
+      },
+      {
+        "name": "60_plus",
+        "label": "\u226560\u5c81",
+        "min_age": 60,
+        "max_age": 120
+      }
+    ]
+  },
+  "groups": [
+    {
+      "name": "ra_strict",
+      "label": "Rheumatoid arthritis",
+      "include_patterns": [
+        "\u7c7b\u98ce\u6e7f(?:\u6027)?\u5173\u8282\u708e|rheumatoid\\s*arthritis"
+      ],
+      "exclude_patterns": [
+        "\u5e72\u71e5\u7efc\u5408(?:\u5f81|\u75c7)|\u820d\u683c\u4f26|\u65af\u8036\u683c\u4f26|sj[o\u00f6]gren|\\bp?ss\\b",
+        "\u5f3a\u76f4\u6027\u810a\u67f1\u708e|ankylosing\\s*spondylitis",
+        "\u7cfb\u7edf\u6027\u7ea2\u6591\u72fc\u75ae|\u7ea2\u6591\u72fc\u75ae|systemic\\s*lupus|\\bSLE\\b|\u7cfb\u7edf\u6027\u786c\u5316(?:\u75c7)?|\u786c\u76ae\u75c5|systemic\\s*sclerosis|scleroderma|\u591a\u53d1\u6027\u808c\u708e|\u76ae\u808c\u708e|\u6297\u5408\u6210\u9176\u7efc\u5408\u5f81|\u514d\u75ab\u4ecb\u5bfc\u574f\u6b7b\u6027\u808c\u75c5|polymyositis|dermatomyositis|antisynthetase|\u6df7\u5408\u6027?\u7ed3\u7f14\u7ec4\u7ec7\u75c5|\u672a\u5206\u5316\u7ed3\u7f14\u7ec4\u7ec7\u75c5|\u7ed3\u7f14\u7ec4\u7ec7\u75c5|mixed\\s*connective\\s*tissue|undifferentiated\\s*connective\\s*tissue|\\bMCTD\\b|\\bUCTD\\b|\\bCTD\\b|\u6297\u78f7\u8102\u7efc\u5408\u5f81|antiphospholipid\\s*syndrome|\\bAPS\\b|\u91cd\u53e0\u7efc\u5408\u5f81|overlap\\s*syndrome"
+      ]
+    },
+    {
+      "name": "sjd_strict",
+      "label": "Sj\u00f6gren disease",
+      "include_patterns": [
+        "\u5e72\u71e5\u7efc\u5408(?:\u5f81|\u75c7)|\u820d\u683c\u4f26|\u65af\u8036\u683c\u4f26|sj[o\u00f6]gren|\\bp?ss\\b"
+      ],
+      "exclude_patterns": [
+        "\u7c7b\u98ce\u6e7f(?:\u6027)?\u5173\u8282\u708e|rheumatoid\\s*arthritis",
+        "\u5f3a\u76f4\u6027\u810a\u67f1\u708e|ankylosing\\s*spondylitis",
+        "\u7cfb\u7edf\u6027\u7ea2\u6591\u72fc\u75ae|\u7ea2\u6591\u72fc\u75ae|systemic\\s*lupus|\\bSLE\\b|\u7cfb\u7edf\u6027\u786c\u5316(?:\u75c7)?|\u786c\u76ae\u75c5|systemic\\s*sclerosis|scleroderma|\u591a\u53d1\u6027\u808c\u708e|\u76ae\u808c\u708e|\u6297\u5408\u6210\u9176\u7efc\u5408\u5f81|\u514d\u75ab\u4ecb\u5bfc\u574f\u6b7b\u6027\u808c\u75c5|polymyositis|dermatomyositis|antisynthetase|\u6df7\u5408\u6027?\u7ed3\u7f14\u7ec4\u7ec7\u75c5|\u672a\u5206\u5316\u7ed3\u7f14\u7ec4\u7ec7\u75c5|\u7ed3\u7f14\u7ec4\u7ec7\u75c5|mixed\\s*connective\\s*tissue|undifferentiated\\s*connective\\s*tissue|\\bMCTD\\b|\\bUCTD\\b|\\bCTD\\b|\u6297\u78f7\u8102\u7efc\u5408\u5f81|antiphospholipid\\s*syndrome|\\bAPS\\b|\u91cd\u53e0\u7efc\u5408\u5f81|overlap\\s*syndrome"
+      ]
+    },
+    {
+      "name": "as_strict",
+      "label": "Ankylosing spondylitis",
+      "include_patterns": [
+        "\u5f3a\u76f4\u6027\u810a\u67f1\u708e|ankylosing\\s*spondylitis"
+      ],
+      "exclude_patterns": [
+        "\u7c7b\u98ce\u6e7f(?:\u6027)?\u5173\u8282\u708e|rheumatoid\\s*arthritis",
+        "\u5e72\u71e5\u7efc\u5408(?:\u5f81|\u75c7)|\u820d\u683c\u4f26|\u65af\u8036\u683c\u4f26|sj[o\u00f6]gren|\\bp?ss\\b",
+        "\u7cfb\u7edf\u6027\u7ea2\u6591\u72fc\u75ae|\u7ea2\u6591\u72fc\u75ae|systemic\\s*lupus|\\bSLE\\b|\u7cfb\u7edf\u6027\u786c\u5316(?:\u75c7)?|\u786c\u76ae\u75c5|systemic\\s*sclerosis|scleroderma|\u591a\u53d1\u6027\u808c\u708e|\u76ae\u808c\u708e|\u6297\u5408\u6210\u9176\u7efc\u5408\u5f81|\u514d\u75ab\u4ecb\u5bfc\u574f\u6b7b\u6027\u808c\u75c5|polymyositis|dermatomyositis|antisynthetase|\u6df7\u5408\u6027?\u7ed3\u7f14\u7ec4\u7ec7\u75c5|\u672a\u5206\u5316\u7ed3\u7f14\u7ec4\u7ec7\u75c5|\u7ed3\u7f14\u7ec4\u7ec7\u75c5|mixed\\s*connective\\s*tissue|undifferentiated\\s*connective\\s*tissue|\\bMCTD\\b|\\bUCTD\\b|\\bCTD\\b|\u6297\u78f7\u8102\u7efc\u5408\u5f81|antiphospholipid\\s*syndrome|\\bAPS\\b|\u91cd\u53e0\u7efc\u5408\u5f81|overlap\\s*syndrome"
+      ]
+    }
+  ]
+}

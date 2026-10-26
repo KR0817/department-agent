@@ -1,0 +1,63 @@
+{
+  "schema_version": "mingyirx-local-field-dictionary-v1",
+  "fields": [
+    {
+      "name": "patient_id",
+      "historical_source_selector": 3
+    },
+    {
+      "name": "visit_id",
+      "historical_source_selector": 4
+    },
+    {
+      "name": "visit_date",
+      "historical_source_selector": 4
+    },
+    {
+      "name": "birth_date",
+      "historical_source_selector": 5
+    },
+    {
+      "name": "sex",
+      "historical_source_selector": 6
+    },
+    {
+      "name": "diagnosis_text",
+      "historical_source_selector": 8
+    },
+    {
+      "name": "item_name",
+      "historical_source_selector": 11
+    },
+    {
+      "name": "dose",
+      "historical_source_selector": 15
+    },
+    {
+      "name": "unit",
+      "historical_source_selector": 16
+    }
+  ],
+  "terminology": {
+    "review_fields": [
+      "source_item_name",
+      "proposed_item_name",
+      "canonical_item_id",
+      "item_type",
+      "preparation",
+      "dosage_form",
+      "unit",
+      "review_status",
+      "reviewer_id",
+      "evidence_reference"
+    ]
+  },
+  "clinical_source_rows_read_this_revision": false,
+  "dose_contract": {
+    "daily_dose_inference": false
+  },
+  "provenance": {
+    "source_setting": "outpatient",
+    "scope": "Generic caller-supplied column contract; no original source identifiers or hashes."
+  }
+}

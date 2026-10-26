@@ -1,0 +1,839 @@
+{
+  "synthetic": true,
+  "cohort_id": "sjd-overview-demo-20-v1",
+  "as_of": "2026-10-23",
+  "source_note": "合成界面演示资料：人口学、病情叙述和指标值均为构造数据，未使用真实患者资料。",
+  "patients": [
+    {
+      "id": "SIM-OV20-001",
+      "name": "模拟患者01",
+      "enrolled_at": "2026-07-01",
+      "first_followup": {
+        "due_date": "2026-09-29",
+        "evidence_visit_id": "SIM-VISIT-001-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-001-B",
+          "date": "2026-07-01",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 6,
+            "fatigue": 5,
+            "pain": 4
+          },
+          "measurements": {
+            "igg": 18.2,
+            "c3": 0.85,
+            "c4": 0.21
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        },
+        {
+          "id": "SIM-VISIT-001-F1",
+          "date": "2026-10-01",
+          "kind": "first_followup",
+          "source_label": "合成随访记录",
+          "symptoms": {
+            "dryness": 4,
+            "fatigue": 5,
+            "pain": 6
+          },
+          "measurements": {
+            "igg": 17.1,
+            "c3": 0.95,
+            "c4": 0.21
+          },
+          "condition_note": "合成随访病情记录：复测模拟症状评分及检验指标，仅展示记录值，不推断治疗效果。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 48,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-002",
+      "name": "模拟患者02",
+      "enrolled_at": "2026-07-02",
+      "first_followup": {
+        "due_date": "2026-09-30",
+        "evidence_visit_id": "SIM-VISIT-002-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-002-B",
+          "date": "2026-07-02",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 5,
+            "fatigue": 6,
+            "pain": 5
+          },
+          "measurements": {
+            "igg": 18.55,
+            "c3": 0.87,
+            "c4": 0.22
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        },
+        {
+          "id": "SIM-VISIT-002-F1",
+          "date": "2026-10-02",
+          "kind": "first_followup",
+          "source_label": "合成随访记录",
+          "symptoms": {
+            "dryness": 7,
+            "fatigue": 6,
+            "pain": 3
+          },
+          "measurements": {
+            "igg": 19.65,
+            "c3": null,
+            "c4": 0.22
+          },
+          "condition_note": "合成随访病情记录：复测模拟症状评分及检验指标，仅展示记录值，不推断治疗效果。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 36,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-003",
+      "name": "模拟患者03",
+      "enrolled_at": "2026-07-03",
+      "first_followup": {
+        "due_date": "2026-10-01",
+        "evidence_visit_id": "SIM-VISIT-003-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-003-B",
+          "date": "2026-07-03",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 4,
+            "fatigue": 7,
+            "pain": 4
+          },
+          "measurements": {
+            "igg": 18.9,
+            "c3": 0.89,
+            "c4": null
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        },
+        {
+          "id": "SIM-VISIT-003-F1",
+          "date": "2026-10-03",
+          "kind": "first_followup",
+          "source_label": "合成随访记录",
+          "symptoms": {
+            "dryness": 4,
+            "fatigue": 7,
+            "pain": 4
+          },
+          "measurements": {
+            "igg": 18.9,
+            "c3": 0.89,
+            "c4": null
+          },
+          "condition_note": "合成随访病情记录：复测模拟症状评分及检验指标，仅展示记录值，不推断治疗效果。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 43,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-004",
+      "name": "模拟患者04",
+      "enrolled_at": "2026-07-04",
+      "first_followup": {
+        "due_date": "2026-10-02",
+        "evidence_visit_id": "SIM-VISIT-004-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-004-B",
+          "date": "2026-07-04",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 6,
+            "fatigue": 5,
+            "pain": null
+          },
+          "measurements": {
+            "igg": 19.25,
+            "c3": 0.91,
+            "c4": 0.24
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        },
+        {
+          "id": "SIM-VISIT-004-F1",
+          "date": "2026-10-04",
+          "kind": "first_followup",
+          "source_label": "合成随访记录",
+          "symptoms": {
+            "dryness": 4,
+            "fatigue": 5,
+            "pain": 7
+          },
+          "measurements": {
+            "igg": 18.15,
+            "c3": 1.01,
+            "c4": 0.24
+          },
+          "condition_note": "合成随访病情记录：复测模拟症状评分及检验指标，仅展示记录值，不推断治疗效果。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 50,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-005",
+      "name": "模拟患者05",
+      "enrolled_at": "2026-07-05",
+      "first_followup": {
+        "due_date": "2026-10-03",
+        "evidence_visit_id": "SIM-VISIT-005-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-005-B",
+          "date": "2026-07-05",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 5,
+            "fatigue": 6,
+            "pain": 4
+          },
+          "measurements": {
+            "igg": 19.6,
+            "c3": 0.93,
+            "c4": 0.25
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        },
+        {
+          "id": "SIM-VISIT-005-F1",
+          "date": "2026-10-05",
+          "kind": "first_followup",
+          "source_label": "合成随访记录",
+          "symptoms": {
+            "dryness": 7,
+            "fatigue": 6,
+            "pain": 2
+          },
+          "measurements": {
+            "igg": 20.7,
+            "c3": 0.83,
+            "c4": 0.25
+          },
+          "condition_note": "合成随访病情记录：复测模拟症状评分及检验指标，仅展示记录值，不推断治疗效果。"
+        }
+      ],
+      "profile": {
+        "sex": "male",
+        "age_at_enrollment": 57,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-006",
+      "name": "模拟患者06",
+      "enrolled_at": "2026-07-06",
+      "first_followup": {
+        "due_date": "2026-10-04",
+        "evidence_visit_id": "SIM-VISIT-006-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-006-B",
+          "date": "2026-07-06",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 4,
+            "fatigue": 7,
+            "pain": 5
+          },
+          "measurements": {
+            "igg": 19.95,
+            "c3": 0.95,
+            "c4": 0.26
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        },
+        {
+          "id": "SIM-VISIT-006-F1",
+          "date": "2026-10-06",
+          "kind": "first_followup",
+          "source_label": "合成随访记录",
+          "symptoms": {
+            "dryness": 4,
+            "fatigue": 7,
+            "pain": 5
+          },
+          "measurements": {
+            "igg": 19.95,
+            "c3": 0.95,
+            "c4": 0.26
+          },
+          "condition_note": "合成随访病情记录：复测模拟症状评分及检验指标，仅展示记录值，不推断治疗效果。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 64,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-007",
+      "name": "模拟患者07",
+      "enrolled_at": "2026-07-07",
+      "first_followup": {
+        "due_date": "2026-10-05",
+        "evidence_visit_id": "SIM-VISIT-007-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-007-B",
+          "date": "2026-07-07",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 6,
+            "fatigue": 5,
+            "pain": 4
+          },
+          "measurements": {
+            "igg": 20.3,
+            "c3": 0.97,
+            "c4": 0.27
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        },
+        {
+          "id": "SIM-VISIT-007-F1",
+          "date": "2026-10-07",
+          "kind": "first_followup",
+          "source_label": "合成随访记录",
+          "symptoms": {
+            "dryness": 4,
+            "fatigue": 5,
+            "pain": 6
+          },
+          "measurements": {
+            "igg": 19.2,
+            "c3": 1.07,
+            "c4": 0.27
+          },
+          "condition_note": "合成随访病情记录：复测模拟症状评分及检验指标，仅展示记录值，不推断治疗效果。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 71,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-008",
+      "name": "模拟患者08",
+      "enrolled_at": "2026-07-08",
+      "first_followup": {
+        "due_date": "2026-10-06",
+        "evidence_visit_id": "SIM-VISIT-008-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-008-B",
+          "date": "2026-07-08",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 5,
+            "fatigue": 6,
+            "pain": 5
+          },
+          "measurements": {
+            "igg": 20.65,
+            "c3": 0.99,
+            "c4": 0.28
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        },
+        {
+          "id": "SIM-VISIT-008-F1",
+          "date": "2026-10-08",
+          "kind": "first_followup",
+          "source_label": "合成随访记录",
+          "symptoms": {
+            "dryness": 7,
+            "fatigue": 6,
+            "pain": 3
+          },
+          "measurements": {
+            "igg": 21.75,
+            "c3": 0.89,
+            "c4": 0.28
+          },
+          "condition_note": "合成随访病情记录：复测模拟症状评分及检验指标，仅展示记录值，不推断治疗效果。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 35,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-009",
+      "name": "模拟患者09",
+      "enrolled_at": "2026-07-09",
+      "first_followup": {
+        "due_date": "2026-10-07",
+        "evidence_visit_id": "SIM-VISIT-009-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-009-B",
+          "date": "2026-07-09",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 4,
+            "fatigue": 7,
+            "pain": 4
+          },
+          "measurements": {
+            "igg": 21.0,
+            "c3": 1.01,
+            "c4": 0.29
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        },
+        {
+          "id": "SIM-VISIT-009-F1",
+          "date": "2026-10-09",
+          "kind": "first_followup",
+          "source_label": "合成随访记录",
+          "symptoms": {
+            "dryness": 4,
+            "fatigue": 7,
+            "pain": 4
+          },
+          "measurements": {
+            "igg": 21.0,
+            "c3": 1.01,
+            "c4": 0.29
+          },
+          "condition_note": "合成随访病情记录：复测模拟症状评分及检验指标，仅展示记录值，不推断治疗效果。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 42,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-010",
+      "name": "模拟患者10",
+      "enrolled_at": "2026-07-10",
+      "first_followup": {
+        "due_date": "2026-10-08",
+        "evidence_visit_id": "SIM-VISIT-010-F1"
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-010-B",
+          "date": "2026-07-10",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 6,
+            "fatigue": 5,
+            "pain": 5
+          },
+          "measurements": {
+            "igg": 21.35,
+            "c3": 1.03,
+            "c4": 0.3
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        },
+        {
+          "id": "SIM-VISIT-010-F1",
+          "date": "2026-10-10",
+          "kind": "first_followup",
+          "source_label": "合成随访记录",
+          "symptoms": {
+            "dryness": 4,
+            "fatigue": 5,
+            "pain": 7
+          },
+          "measurements": {
+            "igg": 20.25,
+            "c3": 1.13,
+            "c4": 0.3
+          },
+          "condition_note": "合成随访病情记录：复测模拟症状评分及检验指标，仅展示记录值，不推断治疗效果。"
+        }
+      ],
+      "profile": {
+        "sex": "male",
+        "age_at_enrollment": 49,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-011",
+      "name": "模拟患者11",
+      "enrolled_at": "2026-06-27",
+      "first_followup": {
+        "due_date": "2026-09-25",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-011-B",
+          "date": "2026-06-27",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 5,
+            "fatigue": 6,
+            "pain": 4
+          },
+          "measurements": {
+            "igg": 21.7,
+            "c3": 1.05,
+            "c4": 0.31
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 56,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-012",
+      "name": "模拟患者12",
+      "enrolled_at": "2026-07-03",
+      "first_followup": {
+        "due_date": "2026-10-01",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-012-B",
+          "date": "2026-07-03",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 4,
+            "fatigue": 7,
+            "pain": 5
+          },
+          "measurements": {
+            "igg": 22.05,
+            "c3": 1.07,
+            "c4": 0.32
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 63,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-013",
+      "name": "模拟患者13",
+      "enrolled_at": "2026-07-09",
+      "first_followup": {
+        "due_date": "2026-10-07",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-013-B",
+          "date": "2026-07-09",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 6,
+            "fatigue": 5,
+            "pain": 4
+          },
+          "measurements": {
+            "igg": 22.4,
+            "c3": 1.09,
+            "c4": 0.33
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 70,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-014",
+      "name": "模拟患者14",
+      "enrolled_at": "2026-07-21",
+      "first_followup": {
+        "due_date": "2026-10-19",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-014-B",
+          "date": "2026-07-21",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 5,
+            "fatigue": 6,
+            "pain": 5
+          },
+          "measurements": {
+            "igg": 22.75,
+            "c3": 1.11,
+            "c4": 0.34
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 34,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-015",
+      "name": "模拟患者15",
+      "enrolled_at": "2026-07-24",
+      "first_followup": {
+        "due_date": "2026-10-22",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-015-B",
+          "date": "2026-07-24",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 4,
+            "fatigue": 7,
+            "pain": 4
+          },
+          "measurements": {
+            "igg": 23.1,
+            "c3": 1.13,
+            "c4": 0.35
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        }
+      ],
+      "profile": {
+        "sex": "male",
+        "age_at_enrollment": 41,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-016",
+      "name": "模拟患者16",
+      "enrolled_at": "2026-07-28",
+      "first_followup": {
+        "due_date": "2026-10-26",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-016-B",
+          "date": "2026-07-28",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 6,
+            "fatigue": 5,
+            "pain": 5
+          },
+          "measurements": {
+            "igg": 23.45,
+            "c3": 1.15,
+            "c4": 0.36
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 48,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-017",
+      "name": "模拟患者17",
+      "enrolled_at": "2026-07-31",
+      "first_followup": {
+        "due_date": "2026-10-29",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-017-B",
+          "date": "2026-07-31",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 5,
+            "fatigue": 6,
+            "pain": 4
+          },
+          "measurements": {
+            "igg": 23.8,
+            "c3": 1.17,
+            "c4": 0.37
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 55,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-018",
+      "name": "模拟患者18",
+      "enrolled_at": "2026-08-22",
+      "first_followup": {
+        "due_date": "2026-11-20",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-018-B",
+          "date": "2026-08-22",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 4,
+            "fatigue": 7,
+            "pain": 5
+          },
+          "measurements": {
+            "igg": 24.15,
+            "c3": 1.19,
+            "c4": 0.38
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 62,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-019",
+      "name": "模拟患者19",
+      "enrolled_at": "2026-08-25",
+      "first_followup": {
+        "due_date": "2026-11-23",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-019-B",
+          "date": "2026-08-25",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 6,
+            "fatigue": 5,
+            "pain": 4
+          },
+          "measurements": {
+            "igg": 24.5,
+            "c3": 1.21,
+            "c4": 0.39
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        }
+      ],
+      "profile": {
+        "sex": "female",
+        "age_at_enrollment": 69,
+        "condition_label": "合成干燥综合征病例"
+      }
+    },
+    {
+      "id": "SIM-OV20-020",
+      "name": "模拟患者20",
+      "enrolled_at": "2026-08-28",
+      "first_followup": {
+        "due_date": "2026-11-26",
+        "evidence_visit_id": null
+      },
+      "visits": [
+        {
+          "id": "SIM-VISIT-020-B",
+          "date": "2026-08-28",
+          "kind": "baseline",
+          "source_label": "合成入组记录",
+          "symptoms": {
+            "dryness": 5,
+            "fatigue": 6,
+            "pain": 5
+          },
+          "measurements": {
+            "igg": 24.85,
+            "c3": 1.23,
+            "c4": 0.4
+          },
+          "condition_note": "合成入组病情记录：口干、疲劳及关节疼痛的模拟描述，指标仅用于界面演示。"
+        }
+      ],
+      "profile": {
+        "sex": "unknown",
+        "age_at_enrollment": null,
+        "condition_label": "合成干燥综合征病例"
+      }
+    }
+  ],
+  "detail_schema_version": 1
+}

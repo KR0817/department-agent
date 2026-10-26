@@ -1,0 +1,3 @@
+subject_code,episode_code,physician_code,visit_code,date,sequence,condition,symptoms,prescription
+SYN-CSV-01,E1,SYN-D1,V1,2025-02-01,,SYNTHETIC ONLY,no dry mouth,黄芪 10g
+SYN-CSV-01,E1,SYN-D1,V2,2025-02-01,,SYNTHETIC ONLY,simulated fatigue,白芍 5包

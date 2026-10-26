@@ -1,0 +1,7 @@
+# SJD-SYNTHETIC：完全虚构的中文复核练习，不是临床报告或模型准确率评测
+patient_id,name,visit_date,event_id,code,value,unit,source_note
+SIM-ZH-REVIEW-001,虚构测试患者甲,2026-10-22,morning,pain,3,,疼痛评分：8；更正报告疼痛评分：5
+SIM-ZH-REVIEW-001,虚构测试患者甲,2026-10-22,morning,igg,18.20,g/L,IgG：18.20 g/L
+SIM-ZH-REVIEW-001,虚构测试患者甲,2026-10-22,evening,igg,19.40,g/L,IgG：19.40 g/L
+SIM-ZH-REVIEW-001,虚构测试患者甲,2026-10-22,evening,ssa,阳性,,SSA：阳性；本行为拒绝操作练习项
+SIM-ZH-REVIEW-001,虚构测试患者甲,2026-10-22,evening,c3,0.79,g/L,C3：0.79 g/L；本行为暂缓复核练习项

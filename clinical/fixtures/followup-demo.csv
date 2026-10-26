@@ -1,0 +1,3 @@
+# SJD-SYNTHETIC: constructed follow-up, not evidence of patient contact
+patient_id,name,visit_date,event_id,code,value,unit,source_note
+SIM-REVIEW-001,Synthetic review patient,2026-11-20,followup,igg,17.20,g/L,IgG: 17.20 g/L

@@ -1,0 +1,98 @@
+{
+  "project_id": "MINGYIRX_SYNTHETIC_DEMO",
+  "dataset_id": "SYNTHETIC_RX_V1",
+  "cohort_version": "v1.0.0-exclusive-recorded-label-groups",
+  "encoding": "utf-8-sig",
+  "synthetic_mode": true,
+  "min_public_n": 2,
+  "exclusive_groups": true,
+  "cross_file_overlap_policy": "append",
+  "require_visit_group_match": false,
+  "item_eligibility": {
+    "allowed_units": [],
+    "excluded_exact_names": [],
+    "excluded_name_patterns": []
+  },
+  "item_normalization": {
+    "version": "synthetic-reviewed-v1",
+    "dictionary_path": "../data/synthetic/item_dictionary.csv",
+    "expected_sha256": "54904d3a997c43a0c6ba69894236780d1fe898a08b4871f8b997c3cec265e661"
+  },
+  "matched_reference": {
+    "enabled": true,
+    "assume_single_physician": false,
+    "random_seed": 20260822,
+    "bootstrap_replicates": 200,
+    "null_replicates": 200
+  },
+  "combination_analysis": {
+    "enabled": true,
+    "sizes": [
+      2,
+      3
+    ],
+    "stability_probability": 0.8
+  },
+  "network_analysis": {
+    "enabled": true,
+    "primary_cosine": 0.5,
+    "node_prevalence_thresholds": [
+      0.25,
+      0.5,
+      0.75
+    ],
+    "edge_cosine_thresholds": [
+      0.3,
+      0.5,
+      0.7
+    ],
+    "stability_probability": 0.8
+  },
+  "early_end_year": 2019,
+  "temporal_cutpoints": [
+    2018,
+    2019,
+    2020,
+    2021
+  ],
+  "core_prevalence": 0.5,
+  "date_formats": [
+    "%Y-%m-%d"
+  ],
+  "columns": {
+    "patient_id": "patient_id",
+    "visit_id": "visit_id",
+    "visit_date": "visit_date",
+    "diagnosis_text": "diagnosis_text",
+    "item_name": "item_name",
+    "dose": "dose",
+    "unit": "unit",
+    "physician_id": "physician_id"
+  },
+  "groups": [
+    {
+      "name": "ra",
+      "label": "Rheumatoid arthritis",
+      "include_patterns": [
+        "\\bRA\\b"
+      ],
+      "exclude_patterns": []
+    },
+    {
+      "name": "sjd",
+      "label": "Sj\u00f6gren disease",
+      "include_patterns": [
+        "\\bSjD\\b"
+      ],
+      "exclude_patterns": []
+    },
+    {
+      "name": "as",
+      "label": "Ankylosing spondylitis",
+      "include_patterns": [
+        "\\bAS\\b"
+      ],
+      "exclude_patterns": []
+    }
+  ]
+}

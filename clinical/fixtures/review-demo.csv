@@ -1,0 +1,7 @@
+# SJD-SYNTHETIC: constructed review exercise, not a clinical report or model evaluation
+patient_id,name,visit_date,event_id,code,value,unit,source_note
+SIM-REVIEW-001,Synthetic review patient,2026-10-22,morning,pain,3,,pain: 8; corrected report pain: 5
+SIM-REVIEW-001,Synthetic review patient,2026-10-22,morning,igg,18.20,g/L,IgG: 18.20 g/L
+SIM-REVIEW-001,Synthetic review patient,2026-10-22,evening,igg,19.40,g/L,IgG: 19.40 g/L
+SIM-REVIEW-001,Synthetic review patient,2026-10-22,evening,ssa,positive,,SSA: positive; source flagged for rejection exercise
+SIM-REVIEW-001,Synthetic review patient,2026-10-22,evening,c3,0.79,g/L,C3: 0.79 g/L; deferred review exercise

@@ -1,0 +1,45 @@
+{
+  "repository": "https://github.com/MengTo/threeui",
+  "commit": "68802d5428071ada5c20db8094b1649e6bb770ed",
+  "package_version": "1.2.0",
+  "license": "MIT",
+  "files": [
+    {
+      "upstream_path": "LICENSE",
+      "local_file": "LICENSE",
+      "git_blob_sha": "b3a5f823a69b4b010f92930ac09e8a776daf65c6",
+      "url": "https://github.com/MengTo/threeui/blob/68802d5428071ada5c20db8094b1649e6bb770ed/LICENSE"
+    },
+    {
+      "upstream_path": "ASSET-LICENSES.md",
+      "local_file": "ASSET-LICENSES.md",
+      "git_blob_sha": "eda8c461275a040b6cfd87392d66c7ff725418d5",
+      "url": "https://github.com/MengTo/threeui/blob/68802d5428071ada5c20db8094b1649e6bb770ed/ASSET-LICENSES.md"
+    },
+    {
+      "upstream_path": "src/shaders/animated-top-dock/AnimatedTopDock.tsx",
+      "local_file": "AnimatedTopDock.tsx",
+      "git_blob_sha": "949efd020128ae66c320fb8d5e15aca85c09a896",
+      "url": "https://github.com/MengTo/threeui/blob/68802d5428071ada5c20db8094b1649e6bb770ed/src/shaders/animated-top-dock/AnimatedTopDock.tsx"
+    },
+    {
+      "upstream_path": "src/shaders/animated-top-dock/topDockController.ts",
+      "local_file": "topDockController.ts",
+      "git_blob_sha": "49cea38d0e1f10d5ba0ece9953c58ddd2c100cde",
+      "url": "https://github.com/MengTo/threeui/blob/68802d5428071ada5c20db8094b1649e6bb770ed/src/shaders/animated-top-dock/topDockController.ts"
+    },
+    {
+      "upstream_path": "src/shaders/neuform-isolated/sources/spinning-border-button.html",
+      "local_file": "spinning-border-button.html",
+      "git_blob_sha": "e53fedd6337461f1edb157aeec393a4fc06b189e",
+      "url": "https://github.com/MengTo/threeui/blob/68802d5428071ada5c20db8094b1649e6bb770ed/src/shaders/neuform-isolated/sources/spinning-border-button.html"
+    },
+    {
+      "upstream_path": "src/shaders/community.css",
+      "local_file": "community.css",
+      "git_blob_sha": "6dfe22e0e4771c786a0fd45367b4e9d5d2ea8d6e",
+      "url": "https://github.com/MengTo/threeui/blob/68802d5428071ada5c20db8094b1649e6bb770ed/src/shaders/community.css"
+    }
+  ],
+  "adaptation": "Native static-HTML components; no React, Three.js, external fonts, remote assets or CDN runtime. Upstream source is retained for attribution and review, not executed."
+}
