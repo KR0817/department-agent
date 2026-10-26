@@ -17,3 +17,4 @@ The public demonstration must use independently generated fixtures and relative 
 - The 14 prescription resources are generated under ignored work directories. Existing renderers supply the aggregate, clinical, exact-prescription and inheritance views. The report and report CSVs are invented display fixtures.
 - The launcher uses only loopback services, per-run persistence and an operating-system file lock. It stops only processes it started. The integration smoke exercises clinical review, prescription revision persistence and a restart without invoking a model.
 - The source link points to the matching public release tag. Publishing a modified service requires an updated source offer.
+- Windows CI may return an 8.3 short path for temporary directories. Tests that mock a checkout root must resolve that root, matching production path canonicalization; the private-output location and Git-ignore guards remain unchanged.

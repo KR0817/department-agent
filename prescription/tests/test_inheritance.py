@@ -352,7 +352,8 @@ class InheritanceTests(unittest.TestCase):
         # Only fixture content is used; these flags exercise the restricted branch.
         restricted = dict(self.bundle, synthetic=False, local_authorization=True, deidentified=True)
         with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
+            # Match the resolved production root, including Windows short paths.
+            root = Path(temporary).resolve()
             with patch.object(inheritance, "CHECKOUT_ROOT", root), patch.object(inheritance.subprocess, "run", return_value=SimpleNamespace(returncode=0)) as ignored:
                 source = self.write_bundle(root / "synthetic-branch-test.json", restricted)
                 frozen = root / "work" / "new" / "frozen"
