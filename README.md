@@ -48,6 +48,10 @@ uv run --frozen python scripts/release_check.py
 
 `check.py` runs the portable unit suites. `smoke_test.py` starts separate loopback services, checks the integrated synthetic workflows and stops only its owned processes. It never invokes a model. `release_check.py` inspects the Git index for prohibited files and known unsafe patterns without printing matched values. The scanner is one publication control; it cannot certify that arbitrary contributed data is anonymous.
 
+For the optional browser regression, start an isolated synthetic run on ports 18930/18931 and run `node scripts/ui_check.cjs` with Playwright available to Node and Microsoft Edge installed. `PLAYWRIGHT_MODULE` may point to an existing Playwright installation. `UI_CHECK_BASE`, `UI_CHECK_OUTPUT` and `UI_CHECK_CHANNEL` override the loopback URL, ignored evidence directory and browser channel. The check creates explicitly synthetic records and captures desktop, tablet and mobile screens. Use a dedicated run; never point it at a business deployment.
+
+The workbench UI uses a responsive navigation rail, source comparison and the complete original prescription workspace. See [the UI implementation contract](docs/UI-Optimization-Tech-Spec.md) for preserved behavior and acceptance criteria.
+
 ## Optional local literature mode
 
 The original literature collection, PDFs, full-text XML, translations and frozen indexes are **not distributed**. The repository's software license does not grant rights to them. Supply a local, validated corpus you are entitled to use, preserving the source module's required provenance and index layout:

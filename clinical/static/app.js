@@ -17,6 +17,7 @@ const tabs=['job','patients','tasks','outbox','admin'];
 let overviewRequest=0, viewVersion=0, workbenchTab='job', activePatientId=null;
 let overviewCache=null, overviewPending=null, overviewFetchVersion=0;
 let overviewFilter='all', overviewQuery='';
+let sourceReview=null;
 const overviewStates={completed:'首次随访已完成',overdue:'已逾期',in_window:'窗口内',upcoming:'未到期'};
 const outboxStates={draft:'待复核草稿',pending_send:'待发送',completed:'已完成访视',cancelled:'已取消'};
 const roleLabel=role=>role==='admin'?'管理员':'工作人员';
@@ -330,6 +331,9 @@ function reviewFieldCard(job,field) {
   top.append(el('span',status,'badge '+(archived(field)?'success':decision?.action==='reject'?'muted':'')));
   card.append(top,el('p','原始候选','eyebrow'),el('p',literal(original),'candidate-value'),
     el('p','原文依据','field-caption'),el('blockquote',original.quote,'quote'));
+  const source=el('button','查看原文位置','text-button field-source-action');source.type='button';
+  source.setAttribute('aria-label','查看'+fieldName(original.code)+'的原文位置');
+  source.onclick=()=>openSourceReview(job,field.id);card.append(source);
   if(decision) {
     const saved=el('div',undefined,'saved-decision');
     if(decision.action==='modify') {
@@ -582,6 +586,7 @@ async function show(which,options={}) {
   if(!currentUser) return;
   if(which==='admin'&&currentUser.role!=='admin') return;
   tab=which;const version=++viewVersion;
+  sourceReview?.dialog.close();
   const patientSection=['overview','patient','record'].includes(which);
   const departmentSection=['knowledge','analysis','analysis-quick'].includes(which);
   activePatientId=['patient','record'].includes(which)?options.patientId:null;
@@ -1429,28 +1434,73 @@ async function mountCareRoster(section,scope,active) {
   } catch(exception) {if(active()){section.replaceChildren(el('p','当前待办暂不可用，患者名单仍可查看。','warning'));feedbackError(section,exception);}}
 }
 async function openSourceReview(job,fieldId='') {
-  const version=sessionVersion,view=viewVersion,dialog=el('dialog',undefined,'source-dialog'),heading=el('div',undefined,'field-heading');
-  const close=el('button','关闭原件对照','secondary');close.type='button';close.onclick=()=>dialog.close();heading.append(el('h2','原件与字段对照'),close);
+  if(sourceReview?.dialog.open&&sourceReview.jobId===job.id&&sourceReview.view===viewVersion) {
+    sourceReview.opener=document.activeElement;
+    await sourceReview.select(fieldId||(job.fields||[])[0]?.id||'');return;
+  }
+  sourceReview?.dialog.close();
+  const version=sessionVersion,view=viewVersion,dialog=el('dialog',undefined,'source-dialog'),heading=el('div',undefined,'source-dialog-heading');
+  const title=el('h2','原件与字段对照');title.id='source_review_title';dialog.setAttribute('aria-labelledby',title.id);
+  const controls=el('div',undefined,'source-dialog-actions'),pin=el('button','固定到右侧','secondary source-pin-toggle');
+  pin.type='button';pin.id='source_pin_toggle';pin.setAttribute('aria-pressed','false');
+  const close=el('button','关闭原件对照','secondary');close.type='button';close.id='source_review_close';close.onclick=()=>dialog.close();controls.append(pin,close);heading.append(title,controls);
+  const context=el('p',job.filename,'source-context');
+  context.append(el('span',' · '+(methods[job.method]||'文档读取'),'help'));
   const content=el('div',undefined,'source-compare'),switcher=el('div',undefined,'source-mobile-switch');
+  switcher.setAttribute('role','group');switcher.setAttribute('aria-label','原件对照视图');
   function setPane(pane){content.dataset.pane=pane;for(const button of switcher.children)button.setAttribute('aria-pressed',String(button.dataset.pane===pane));}
   for(const [pane,title] of [['fields','查看字段'],['page','查看原件']]){const button=el('button',title,'secondary');button.type='button';button.dataset.pane=pane;button.onclick=()=>setPane(pane);switcher.append(button);}setPane('page');
-  dialog.append(heading,switcher,content);document.body.append(dialog);dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.showModal();
+  const download=el('a','下载原始资料');download.href='/api/jobs/'+job.id+'/source';controls.append(download);
+  dialog.append(heading,context,switcher,content);document.body.append(dialog);
+  const review={dialog,jobId:job.id,view,opener:document.activeElement,select:load};sourceReview=review;
+  const wide=window.matchMedia('(min-width: 1280px)');
+  let pinned=false;
+  function setPinned(value) {
+    if(!dialog.open)return;
+    pinned=value&&wide.matches;
+    // Reopen the same dialog so the source selection and scroll remain intact.
+    dialog.close();dialog.classList.toggle('is-pinned',pinned);document.body.classList.toggle('source-pinned',pinned);
+    pin.textContent=pinned?'放大对照':'固定到右侧';pin.setAttribute('aria-pressed',String(pinned));
+    dialog.setAttribute('aria-modal',String(!pinned));
+    if(pinned)dialog.show();else dialog.showModal();
+    (wide.matches?pin:close).focus({preventScroll:true});
+  }
+  pin.onclick=()=>setPinned(!pinned);
+  const resize=()=>{if(!wide.matches&&pinned)setPinned(false);};
+  const escape=event=>{
+    if(event.key==='Escape'&&pinned&&dialog.open&&!document.querySelector('dialog:modal')){event.preventDefault();dialog.close();}
+  };
+  wide.addEventListener('change',resize);document.addEventListener('keydown',escape);
+  dialog.addEventListener('close',()=>{
+    // A pin transition queues a close event after the dialog has reopened.
+    if(dialog.open)return;
+    wide.removeEventListener('change',resize);document.removeEventListener('keydown',escape);dialog.remove();
+    if(sourceReview===review){sourceReview=null;document.body.classList.remove('source-pinned');}
+    if(currentUser&&version===sessionVersion&&view===viewVersion&&review.opener?.isConnected&&!review.opener.closest('[hidden]'))review.opener.focus({preventScroll:true});
+  });
+  dialog.setAttribute('aria-modal','true');dialog.showModal();close.focus();
   const active=()=>dialog.open&&version===sessionVersion&&view===viewVersion&&currentUser;
   const fieldsBox=el('section',undefined,'source-field-list'),pageBox=el('section',undefined,'source-page-view');content.append(fieldsBox,pageBox);
+  fieldsBox.setAttribute('aria-label','选择要核对的字段');pageBox.setAttribute('aria-label','原始资料与定位结果');
   let request=0;
   async function load(id) {
     const current=++request;setPane('page');
     for(const button of fieldsBox.children)button.setAttribute('aria-pressed',String(button.dataset.fieldId===id));
-    pageBox.replaceChildren(el('p','正在定位原文…','help'));
+    pageBox.setAttribute('aria-busy','true');pageBox.replaceChildren(el('p','正在定位原文…','help'));
     try {
       const data=await api('jobs/'+job.id+'/source-map'+(id?'?field_id='+encodeURIComponent(id):''));if(!active()||current!==request)return;
-      const pageButtons=el('div',undefined,'source-page-buttons');pageBox.replaceChildren(pageButtons);
+      const field=(job.fields||[]).find(item=>item.id===id),pageButtons=el('div',undefined,'source-page-buttons');pageBox.replaceChildren();
+      if(field)pageBox.append(el('p',field.date+' · '+fieldName(field.original.code)+'：'+literal(field.original),'source-field-summary'));
+      pageButtons.setAttribute('role','group');pageButtons.setAttribute('aria-label','原件页码');pageBox.append(pageButtons);
       if(data.quote)pageBox.append(el('blockquote',data.quote,'quote'));
-      const found=data.matches||[];pageBox.append(el('p',id?(found.length?'找到 '+found.length+' 处候选位置，请核对上下文。':'未定位到完全对应的摘录，请查看全文或下载原件。'):'请选择字段定位原文。','help'));
+      const found=data.matches||[],status=el('p',id?(found.length?'找到 '+found.length+' 处候选位置，请核对上下文。':'未定位到完全对应的摘录，请查看全文或下载原件。'):'请选择字段定位原文。','help source-status');
+      status.setAttribute('role','status');pageBox.append(status);
       if(data.warnings?.includes('logical_page_only'))pageBox.append(el('p','文本类资料按逻辑页展示。','help'));
+      if(found.length&&!found.some(match=>match.boxes?.length))pageBox.append(el('p','当前定位依据为文字；原件坐标不可用。','help'));
       const display=el('div');pageBox.append(display);
       function showPage(number) {
-        const page=data.pages.find(p=>p.page===number);display.replaceChildren(el('h3','第 '+number+' 页'));
+        const page=data.pages.find(p=>p.page===number);if(!page)return;
+        display.replaceChildren(el('h3','第 '+number+' 页'));
         for(const button of pageButtons.children)button.setAttribute('aria-pressed',String(button.dataset.page===String(number)));
         if(page.image_available) {
           const wrapper=el('div',undefined,'source-image-wrap'),image=el('img');image.src='/api/jobs/'+job.id+'/page/'+number;image.alt='原件第 '+number+' 页';image.onerror=()=>{image.hidden=true;wrapper.append(el('p','页面图像暂不可用，请使用原始资料下载。','warning'));};wrapper.append(image);
@@ -1460,10 +1510,16 @@ async function openSourceReview(job,fieldId='') {
           }
           display.append(wrapper);
         }
-        const pre=el('pre',page.text||'当前页没有可用文字，请对照图像或下载原件。','source');display.append(pre);
+        const pre=el('pre',undefined,'source source-document-text'),text=page.text||'当前页没有可用文字，请对照图像或下载原件。';
+        // Exact text matches are highlighted with DOM nodes; never interpret source text as HTML.
+        let offset=0,hit=data.quote?text.indexOf(data.quote):-1;
+        while(hit!==-1){pre.append(document.createTextNode(text.slice(offset,hit)),el('mark',data.quote,'source-match-text'));offset=hit+data.quote.length;hit=text.indexOf(data.quote,offset);}
+        pre.append(document.createTextNode(text.slice(offset)));display.append(pre);
       }
-      for(const page of data.pages){const button=el('button','第 '+page.page+' 页','secondary');button.type='button';button.dataset.page=String(page.page);button.onclick=()=>showPage(page.page);pageButtons.append(button);}showPage(found[0]?.page||1);
+      for(const page of data.pages){const button=el('button','第 '+page.page+' 页','secondary');button.type='button';button.dataset.page=String(page.page);button.onclick=()=>showPage(page.page);pageButtons.append(button);}
+      if(data.pages.length)showPage(found[0]?.page||data.pages[0].page);else display.append(el('p','当前没有可显示的页面，请下载原始资料核对。','warning'));
     } catch(exception){if(active()&&current===request)feedbackError(pageBox,exception);}
+    finally{if(active()&&current===request)pageBox.setAttribute('aria-busy','false');}
   }
   for(const field of job.fields||[]) {const button=el('button',field.date+' · '+fieldName(field.original.code)+'：'+literal(field.original),'source-field-button');button.type='button';button.dataset.fieldId=field.id;button.onclick=()=>load(field.id);fieldsBox.append(button);}
   await load(fieldId||(job.fields||[])[0]?.id||'');

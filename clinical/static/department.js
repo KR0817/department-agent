@@ -2,6 +2,7 @@
 (() => {
   let epoch = 0;
   let fullContainer = null;
+  let collapseCanvas = null;
   const initial = () => ({question:'',disease:'all',source:'',search:'',catalog:null,answer:null,
     text:'',origin:'synthetic',records:[],excluded:new Set(),confirmed:false,result:null,recognition:null,revision:0,answerQuestion:''});
   let state = initial();
@@ -24,7 +25,7 @@
     else box.append(bar('w-40 h-lg'),bar('w-100'),bar('w-100 h-block'),bar('w-30 h-lg'));
     return box;
   }
-  function clear() { epoch++; for(const item of controllers)item.abort();controllers.clear();state=initial();if(fullContainer){fullContainer.replaceChildren();fullContainer.hidden=true;fullContainer=null;} }
+  function clear() { epoch++; for(const item of controllers)item.abort();controllers.clear();state=initial();if(collapseCanvas){collapseCanvas();collapseCanvas=null;}if(fullContainer){fullContainer.replaceChildren();fullContainer.hidden=true;fullContainer=null;} }
   function button(el,text,handler,cls='secondary') {const item=el('button',text,cls);item.type='button';item.onclick=handler;return item;}
   function field(el,text,control) {const item=el('label');item.append(el('span',text),control);return item;}
   function details(el,title,text) {const item=el('details');item.append(el('summary',title),el('pre',typeof text==='string'?text:JSON.stringify(text,null,2)));return item;}
@@ -42,17 +43,27 @@
     if(!answer) {target.append(el('div','选择病种和文献范围，输入问题后在这里阅读回答与原文依据。','department-empty'));return;}
     const synthetic=answer.data_origin==='synthetic';
     target.append(tag(el,synthetic?'合成示例 · 非医学证据':'公共文献问答'),tag(el,synthetic?'未调用模型':'临床审核待完成',true));
-    if(state.answerQuestion)target.append(el('p',state.answerQuestion,'department-help'));
+    if(state.answerQuestion){const question=el('div',null,'department-question-card');question.append(el('p','本次问题','eyebrow'),el('p',state.answerQuestion));target.append(question);}
     if(answer.answer_scope==='classification_criteria')target.append(el('p','以下为研究分类标准；临床诊断需结合具体病情判断。','department-help'));
     if(!(answer.extracts||[]).length)target.append(el('p',synthetic?'合成演示只回答页面给出的固定示例问题；其他问题不生成医学回答。':statusLabels[answer.status]||'本次未得到可展示的中文回答。','department-empty'));
-    for(const item of answer.extracts||[]) {
-      const article=el('article',null,'department-answer');article.append(el('h3',item.title_zh||item.title));
+    const extracts=answer.extracts||[];
+    if(extracts.length>1){
+      const contents=el('nav',null,'department-answer-contents');contents.setAttribute('aria-label','回答段落');
+      extracts.forEach((item,index)=>contents.append(button(el,String(index+1)+' · '+(item.title_zh||item.title),()=>{const section=target.querySelector('[data-extract="'+index+'"]');section?.focus();section?.scrollIntoView({block:'start'});},'text-button')));target.append(contents);
+    }
+    for(const [index,item] of extracts.entries()) {
+      const article=el('article',null,'department-answer');article.dataset.extract=String(index);article.tabIndex=-1;
+      const heading=el('div',null,'department-answer-heading');heading.append(el('span',String(index+1).padStart(2,'0'),'department-evidence-number'),el('h3',item.title_zh||item.title));article.append(heading);
       article.append(el('div',item.answer_zh||'中文转换未通过校验，请查阅原文依据。','department-prose'));
       const meta=el('p',null,'department-help');meta.textContent=[item.pmid?'PMID '+item.pmid:null,item.doi?'DOI '+item.doi:null].filter(Boolean).join(' · ');article.append(meta);
-      const quote=el('details');quote.append(el('summary','核对原文、出处与翻译状态'),el('blockquote',item.quote),sourceLink(el,item.page_url,synthetic?'查看合成出处':'查看来源全文'),
+      const evidence=el('section',null,'department-evidence-card');evidence.setAttribute('aria-label','本段原文依据');
+      const evidenceBar=el('div',null,'department-evidence-bar');evidenceBar.append(el('strong','原文依据'));
+      // The source endpoint deliberately disallows framing. Retain its protected standalone reader.
+      const read=sourceLink(el,item.page_url,synthetic?'阅读合成出处 ↗':'阅读原文 ↗');read.className='department-read-source';evidenceBar.append(read);
+      const quote=el('details',null,'department-evidence-quote');quote.open=true;quote.append(el('summary','摘录与翻译状态'),el('blockquote',item.quote),
         el('p',item.translation_status==='versioned_translation'?'版本化中文译文 · AI 翻译 · 待临床人工审核。':'来源摘录与中文显示保留独立核查状态。','department-help'),
         details(el,'来源记录',{quote_sha256:item.quote_sha256,translation_status:item.translation_status,translation_origin:item.translation_origin,translation_review_status:item.translation_review_status,translation_artifact_sha256:item.translation_artifact_sha256,translation_bundle_sha256:item.translation_bundle_sha256,translation_checks:item.translation_checks,locator:item.locator}));
-      article.append(quote);target.append(article);
+      evidence.append(evidenceBar,quote);article.append(evidence);target.append(article);
     }
     target.append(el('p','原文定位与结论支持分别核对；回答完整性及临床适用性保留人工判断。','department-help'));
   }
@@ -61,13 +72,14 @@
     if(!state.catalog)state.catalog=await request(ctx,'knowledge/catalog');
     if(!isCurrent())return;
     const synthetic=state.catalog.data_origin==='synthetic';
-    const grid=el('div',null,'department-grid'), left=el('section'),right=el('section');
+    const grid=el('div',null,'department-grid'), left=el('section',null,'department-query-panel'),right=el('section',null,'department-reading-panel');
+    left.append(el('p','本地知识库','eyebrow'),el('h2','查找有出处的回答'));
     const form=el('form'), question=el('textarea');question.id='department_question';question.maxLength=1000;question.required=true;question.value=state.question;
     question.placeholder=synthetic?state.catalog.example_question:'例如：2016年干燥综合征分类标准是什么？';question.oninput=()=>{state.question=question.value;};
     const disease=el('select');disease.id='department_disease';for(const [value,label] of [['all','全部病种'],['sjd','干燥综合征'],['ra','类风湿关节炎'],['gout','痛风']]) {const o=el('option',label);o.value=value;disease.append(o);}disease.value=state.disease;
     const search=el('input');search.type='search';search.id='department_source_search';search.value=state.search;search.placeholder='标题、PMID 或 DOI';
     const selected=el('p',null,'department-help'),sources=el('div',null,'department-source-list');sources.setAttribute('aria-label','文献范围');
-    const count=el('p',null,'department-help');
+    const count=el('p',null,'department-help');count.setAttribute('role','status');
     function fillSources() {
       const all=state.catalog.sources||[],query=state.search.trim().toLowerCase();
       const matches=all.filter(s=>(state.disease==='all'||s.disease===state.disease)&&(!query||[s.title,s.title_zh,s.pmid,s.doi].join(' ').toLowerCase().includes(query)));
@@ -79,6 +91,7 @@
         const b=button(el,source.title_zh||source.title,()=>{state.source=source.id;fillSources();},'department-source');b.setAttribute('aria-pressed',String(state.source===source.id));
         b.append(el('small',[source.year,source.pmid?'PMID '+source.pmid:'',synthetic?'固定合成示例':source.retrieval_eligible?'可检索':'仅阅读'].filter(Boolean).join(' · ')));sources.append(b);
       }
+      if(!matches.length)sources.append(el('p','当前筛选没有匹配文献。请调整病种或搜索词。','department-help'));
     }
     search.oninput=()=>{state.search=search.value;fillSources();};disease.onchange=()=>{state.disease=disease.value;state.source='';fillSources();};
     const submit=el('button','查找依据并回答','primary');submit.type='submit';submit.id='department_ask';
@@ -86,12 +99,13 @@
     form.append(field(el,synthetic?'合成示例问题':'公共文献问题',question),field(el,'病种范围',disease),submit,feedback);
     if(synthetic){form.prepend(el('p','当前为合成软件演示，无医学文献、无模型推理。仅示例问题返回固定的合成出处。','department-help'));form.append(button(el,'填入合成示例问题',()=>{question.value=state.catalog.example_question;state.question=question.value;}));}
     left.append(form,el('p','仅输入通用医学问题。患者档案不会自动带入问答。','department-help'),el('h3','文献范围'),field(el,'搜索本地全文库',search),selected,count,sources);
-    right.append(el('h2','回答与依据'));const answer=el('div');right.append(answer);renderAnswer(answer,ctx);
+    right.append(el('p','回答 · 原文 · 来源','eyebrow'),el('h2','回答与依据'));const answer=el('div');answer.id='department_answer';answer.tabIndex=-1;answer.setAttribute('aria-label','本次回答与依据');right.append(answer);renderAnswer(answer,ctx);
     form.onsubmit=async event=> {
       event.preventDefault();const token=epoch,asked=question.value.trim();submit.disabled=true;submit.textContent=synthetic?'正在读取合成示例…':'正在查阅全文…';feedback.replaceChildren(el('p',synthetic?'正在核对合成示例的来源摘要；未调用模型。':'本地模型正在选择证据，请稍候。','department-help'));
       try {
         const result=await request(ctx,'knowledge/extract',{question:asked,disease:state.disease,source_id:state.source||'all',index_sha256:state.catalog.index_sha256});
         if(token!==epoch||!isCurrent())return;state.answer=result;state.answerQuestion=asked;renderAnswer(answer,ctx);feedback.replaceChildren();
+        if(window.matchMedia('(max-width: 1100px)').matches){answer.focus({preventScroll:true});right.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
       }catch(exc){if(token===epoch&&isCurrent())error(feedback,exc);}
       finally{if(token===epoch&&isCurrent()){submit.disabled=false;submit.textContent='查找依据并回答';}}
     };
@@ -193,20 +207,57 @@
       const status=await request(ctx,'mingyirx/status');
       if(token!==epoch||!ctx.isCurrent())return;
       const controls=el('div',null,'department-full-toolbar');
+      const heading=el('div',null,'department-full-heading');heading.append(el('p','完整工作区','eyebrow'),el('strong','MingYiRx 门诊处方分析'));
       const standalone=el('a','在独立窗口展开');standalone.id='department_rx_open';standalone.href='/api/department/mingyirx/site/index.html';standalone.target='_blank';standalone.rel='noopener';
-      const quick=el('a','快速访次核对');quick.href='#analysis-quick';
-      controls.append(el('strong','MingYiRx 完整处方工作区'),standalone,quick);
+      const quick=el('a','快速访次核对');quick.href='#analysis-quick';quick.id='department_rx_quick';
+      const expand=button(el,'展开画布',()=>setExpanded(!box.classList.contains('department-canvas-expanded')));expand.id='department_rx_expand';expand.setAttribute('aria-pressed','false');expand.setAttribute('aria-controls','department_rx_frame');
+      const actions=el('div',null,'department-full-actions');actions.append(expand,standalone,quick);controls.append(heading,actions);
       const reports=el('details',null,'department-full-reports');reports.append(el('summary','研究报告与下载'));
+      reports.id='department_rx_reports';
       const reportLinks=el('div');
       for(const [name,label] of [['research-report.html','文献研究报告'],['supplement.html','补充来源与汇总'],['analysis-report.md','分析报告（Markdown）'],['conditional_retention.csv','条件性保留率'],['disease-change-results.csv','病种与处方变化结果'],['literature-analysis-results.csv','文献分析结果'],['source-ledger.json','来源台账'],['source-correction.json','来源更正记录'],['teaching-provenance.json','教学资料来源']]) {
         if(!(status.static_assets||[]).includes(name))continue;
         const link=el('a',label);link.href='/api/department/mingyirx/site/'+name;link.target='_blank';link.rel='noopener';if(!name.endsWith('.html'))link.download=name;reportLinks.append(link);
       }
-      reports.append(reportLinks);controls.append(reports);
+      reports.append(reportLinks);
       const note=el('p','沿用原处方网页及页内来源标记。导入后经核对保存为版本集合；切换科室模块会保留当前页面。临床工作台演示状态不改变本页资料来源。','department-help');
       if(status.collection_scope==='local_single_operator')note.append(' 当前为本机单操作者集合。');
+      const help=el('details',null,'department-full-help');help.append(el('summary','资料来源与保存范围'),note,el('p','导入集合保存后生成对应医案比较视图。汇总图按原流程生成；传承标注在浏览器中保留为草稿，沿用导出、验证与冻结流程。','department-help'));
+      const context=el('div',null,'department-full-context');context.append(reports,help);
       const frame=el('iframe');frame.id='department_rx_frame';frame.title='MingYiRx 原处方分析、医案传承与导入工作区';frame.src=standalone.href;
-      box.replaceChildren(controls,note,frame);
+      // Keep the same iframe in normal document flow: expansion must never reload its drafts.
+      function setExpanded(value,restoreFocus=true){
+        box.classList.toggle('department-canvas-expanded',value);document.body.classList.toggle('department-canvas-expanded',value);
+        expand.setAttribute('aria-pressed',String(value));expand.textContent=value?'收起画布 · Esc':'展开画布';
+        if(restoreFocus){expand.focus();if(value)controls.scrollIntoView({block:'start'});}
+      }
+      const escape=event=>{if(!event.defaultPrevented&&event.key==='Escape'&&box.classList.contains('department-canvas-expanded')){event.preventDefault();setExpanded(false);}};
+      window.addEventListener('keydown',escape);
+      // Events do not cross iframe boundaries. Follow only accessible documents and release
+      // old document listeners on navigation, so imported collections retain their own handlers.
+      function bindFrameEscape(owner){
+        let releaseDocument=()=>{};
+        const loaded=()=>{
+          releaseDocument();releaseDocument=()=>{};
+          let doc;try{doc=owner.contentDocument;}catch{return;}
+          const view=doc?.defaultView;if(!view)return;
+          const children=new Map();
+          const sync=()=>{
+            const frames=new Set(doc.querySelectorAll('iframe'));
+            for(const [child,release] of children)if(!frames.has(child)){release();children.delete(child);}
+            for(const child of frames)if(!children.has(child))children.set(child,bindFrameEscape(child));
+          };
+          view.addEventListener('keydown',escape);
+          const observer=new MutationObserver(sync);observer.observe(doc,{childList:true,subtree:true});sync();
+          releaseDocument=()=>{observer.disconnect();view.removeEventListener('keydown',escape);for(const release of children.values())release();children.clear();};
+        };
+        owner.addEventListener('load',loaded);loaded();
+        return()=>{owner.removeEventListener('load',loaded);releaseDocument();};
+      }
+      const releaseFrameEscape=bindFrameEscape(frame);
+      const visibility=new MutationObserver(()=>{if(box.hidden)setExpanded(false,false);});visibility.observe(box,{attributes:true,attributeFilter:['hidden']});
+      collapseCanvas=()=>{setExpanded(false,false);visibility.disconnect();window.removeEventListener('keydown',escape);releaseFrameEscape();};
+      box.replaceChildren(controls,context,frame);
     }catch(exc){if(token===epoch&&ctx.isCurrent()){box.replaceChildren();ctx.error(box,exc);box.append(button(el,'重新连接原工作区',()=>renderFull(box,ctx)));}}
   }
   window.Department=Object.freeze({render,renderFull,clear});

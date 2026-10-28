@@ -18,6 +18,7 @@
 <body>
   <a class="skip-link" href="#workspace" data-skip-target="workspace_title">跳到工作区</a>
   <header>
+    <button id="navigation_toggle" type="button" class="navigation-toggle" aria-label="打开主导航" aria-controls="primary_navigation" aria-expanded="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
     <div class="brand">
       <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="8" fill="#176b5a"/><path d="M16 6.5c3.9 4.8 6.4 8.5 6.4 11.6a6.4 6.4 0 0 1-12.8 0c0-3.1 2.5-6.8 6.4-11.6z" fill="#fff"/><path d="M12.9 18.4a3.2 3.2 0 0 0 3.1 3.2" fill="none" stroke="#176b5a" stroke-width="1.6" stroke-linecap="round"/></svg>
       <b class="brand-word">科室 Agent</b><span class="brand-name">临床 · 证据 · 分析</span>
@@ -69,11 +70,16 @@
     </div>
   </section>
   <main id="workspace" hidden>
-    <nav class="primary-nav" aria-label="主导航">
-      <button id="nav_overview" type="button" aria-current="false">患者总览</button>
-      <button id="nav_workbench" type="button" aria-current="page">科室资料工作台</button>
-      <button id="nav_knowledge" type="button" aria-current="false">知识问答</button>
-      <button id="nav_analysis" type="button" aria-current="false">门诊分析</button>
+    <button id="navigation_backdrop" class="navigation-backdrop" type="button" aria-label="关闭主导航" tabindex="-1" hidden></button>
+    <nav id="primary_navigation" class="primary-nav" aria-label="主导航">
+      <div class="navigation-brand"><span class="navigation-monogram" aria-hidden="true">科</span><div><strong>科室 Agent</strong><small>临床 · 证据 · 分析</small></div><button id="navigation_close" type="button" class="text-button" aria-label="关闭主导航">×</button></div>
+      <p class="navigation-label">科室工作空间</p>
+      <button id="nav_overview" type="button" aria-current="false" title="患者总览"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/></svg><span>患者总览</span></button>
+      <button id="nav_workbench" type="button" aria-current="page" title="科室资料工作台"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h5"/></svg><span>科室资料工作台</span></button>
+      <button id="nav_knowledge" type="button" aria-current="false" title="知识问答"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5C9 3 6 3 3 4v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1zm0 0v15"/></svg><span>知识问答</span></button>
+      <button id="nav_analysis" type="button" aria-current="false" title="门诊分析"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v17h17M8 15v-4M13 15V7M18 15v-6"/></svg><span>门诊分析</span></button>
+      <div class="navigation-note"><strong>资料有来源，复核有记录</strong><p>原文定位、人工确认与版本归档，接续每一次就诊。</p></div>
+      <div class="navigation-footer"><span class="navigation-dot" aria-hidden="true"></span><span>本机工作空间</span></div>
     </nav>
     <section class="intro">
       <div class="workspace-heading"><div><p class="eyebrow" id="workspace_eyebrow">批量提取 · 核对异常 · 纵向归档</p><h1 id="workspace_title">科室资料工作台</h1></div><span id="operator" class="session"></span></div>
@@ -151,7 +157,7 @@
     </div>
   </main>
   <footer id="footer_note">本机处理 · 原文与更正历史保留 · 人工复核后归档</footer>
-  <footer><a href="https://github.com/KR0817/department-agent/tree/v0.1.0" target="_blank" rel="noopener noreferrer">Source code v0.1.0 · AGPL-3.0-only</a></footer>
+  <footer><a href="https://github.com/KR0817/department-agent/tree/v0.1.1" target="_blank" rel="noopener noreferrer">Source code v0.1.1 · AGPL-3.0-only</a></footer>
 </body>
 </html>
 

@@ -8,11 +8,11 @@
 }
 :root {
   color-scheme: light;
-  --bg: #f4f6f5;
+  --bg: #fafbf9;
   --surface: #ffffff;
-  --line: #e0e7e3;
-  --ink: #15302a;
-  --text: #2b3d37;
+  --line: #e3e8e3;
+  --ink: #3a413c;
+  --text: #3a413c;
   --accent: #176b5a;
 }
 body {
@@ -29,7 +29,8 @@ main {
   margin: 24px auto;
   padding: 32px 40px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(124,152,133,.08);
   background: var(--surface);
   overflow-wrap: anywhere;
 }
