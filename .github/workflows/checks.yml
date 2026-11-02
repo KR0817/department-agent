@@ -43,5 +43,7 @@ jobs:
         run: uv run --frozen python scripts/release_check.py
       - name: Run module tests
         run: uv run --frozen python scripts/check.py
+      - name: Run assistant state tests
+        run: node --test tests/assistant_state.test.cjs
       - name: Run isolated integration smoke
         run: uv run --frozen python scripts/smoke_test.py

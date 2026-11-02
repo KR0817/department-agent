@@ -588,7 +588,7 @@ async function show(which,options={}) {
   tab=which;const version=++viewVersion;
   sourceReview?.dialog.close();
   const patientSection=['overview','patient','record'].includes(which);
-  const departmentSection=['knowledge','analysis','analysis-quick'].includes(which);
+  const departmentSection=['assistant','knowledge','analysis','analysis-quick'].includes(which);
   activePatientId=['patient','record'].includes(which)?options.patientId:null;
   if(!patientSection&&!departmentSection&&which!=='account') workbenchTab=which;
   const hash=departmentSection?'#'+which:which==='overview'?'#overview':which==='patient'?'#patient/'+encodeURIComponent(activePatientId):which==='record'?'#record/'+encodeURIComponent(activePatientId):'#workbench';
@@ -597,6 +597,7 @@ async function show(which,options={}) {
   $('upload_sidebar').hidden=patientSection||departmentSection;$('workbench_tabs').hidden=patientSection||departmentSection;$('workbench_status').hidden=patientSection||departmentSection;
   $('nav_overview').setAttribute('aria-current',patientSection?'page':'false');$('nav_workbench').setAttribute('aria-current',!patientSection&&!departmentSection?'page':'false');
   $('nav_knowledge').setAttribute('aria-current',which==='knowledge'?'page':'false');$('nav_analysis').setAttribute('aria-current',which.startsWith('analysis')?'page':'false');
+  $('nav_assistant').setAttribute('aria-current',which==='assistant'?'page':'false');
   $('workspace_title').textContent=which==='knowledge'?'科室知识问答':which==='analysis'?'门诊处方与随访分析':which==='analysis-quick'?'快速访次核对':['patient','record'].includes(which)?'患者详情':which==='overview'?'患者总览':'科室资料工作台';
   $('workspace_eyebrow').textContent=which==='knowledge'?'提出问题 · 查阅全文 · 核对依据':which==='analysis'?'原处方工作区 · 汇总分析 · 医案传承 · 导入与保存':which==='analysis-quick'?'医案识别 · 逐项核对 · 相邻处方对照':patientSection?'患者档案 · 资料来源 · 访视与指标':'批量提取 · 核对异常 · 纵向归档';
   for(const name of tabs) {
@@ -614,6 +615,11 @@ async function show(which,options={}) {
   }
   box.classList.toggle('department',departmentSection);
   if(departmentSection) {
+    if(which==='assistant') {
+      $('workspace_title').textContent='科室助手';$('workspace_eyebrow').textContent='整理资料 · 补全信息 · 查阅依据 · 接续分析';
+      await window.DepartmentAssistant.render(box,{api,el,error,isCurrent:()=>Boolean(currentUser)&&tab===which&&version===viewVersion});
+      return;
+    }
     await window.Department.render(which,box,{api,el,error,isCurrent:()=>Boolean(currentUser)&&tab===which&&version===viewVersion});
     return;
   }
@@ -667,7 +673,7 @@ async function show(which,options={}) {
 }
 function routeFromHash() {
   if(!currentUser) return;
-  if(['#knowledge','#analysis','#analysis-quick'].includes(location.hash)) return show(location.hash.slice(1),{fromRoute:true});
+  if(['#assistant','#knowledge','#analysis','#analysis-quick'].includes(location.hash)) return show(location.hash.slice(1),{fromRoute:true});
   if(location.hash==='#overview') return show('overview',{fromRoute:true});
   if(location.hash.startsWith('#patient/')) {
     let patientId='';try {patientId=decodeURIComponent(location.hash.slice(9));} catch {patientId='';}
@@ -1781,6 +1787,7 @@ function configureAuth(setup) {
 }
 function signedOut(message='') {
   window.Department?.clear();
+  window.DepartmentAssistant?.clear();
   authVersion++;
   registryRequest++;registryPatients=[];registryLoaded=false;uploadPatient=null;registryQuery='';overviewSource='registry';patientCreating=false;
   stopUploads();uploadBatch=[];renderUploads();
@@ -2006,6 +2013,7 @@ renderSelectedPatient();renderPatientOptions();
 for(const name of tabs) $('tab_'+name).onclick=()=>show(name);
 $('nav_overview').onclick=()=>show('overview');$('nav_workbench').onclick=()=>show(workbenchTab);
 $('nav_knowledge').onclick=()=>show('knowledge');$('nav_analysis').onclick=()=>show('analysis');
+$('nav_assistant').onclick=()=>show('assistant');
 window.addEventListener('hashchange',routeFromHash);
 async function health() {
   if(!currentUser) return;

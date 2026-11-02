@@ -30,6 +30,25 @@ Use a Git clone. The prescription module deliberately checks that writable outpu
 | Clinical workbench | Register a fictional patient, upload marked synthetic CSV, review source lines, confirm and archive, reopen a longitudinal record | Field-level provenance, review/edit/reject/defer decisions, corrections, versioned archival/recovery, patient overview, follow-up queues, account/recovery code |
 | Knowledge | Read an explicitly synthetic source and ask its example question; unrelated questions are refused | Source-bound extractive answers, source/section locators, provenance checks, translation labels and the optional frozen-corpus/model path |
 | Prescriptions | Aggregate, exact prescription and inheritance views; recognize, review, save and resume invented collections; synthetic report/download pages | Complete MingYiRx source, analysis and rendering modules, input validation, per-collection revision handling and separate source labels |
+| Department assistant | Choose a task, identify missing intake information, save/resume a local draft, select a public source and search explicitly saved cases | Account-scoped append-only drafts, stale-write protection, supplement provenance and links to the original workspaces |
+
+The local assistant is available at `/#assistant`. Task routing is bounded keyword
+classification, and saved-case retrieval is lexical matching within the signed-in
+account's committed prescription collection. Supplements remain unapproved draft
+observations until explicitly reviewed. Clinical archival and prescription saves
+continue through their existing workflows. Drafts preserve source text, supplemental
+observations, selected public-source ID and the last queried collection revision.
+The categories for classics and formula materials remain empty until corresponding
+authorized sources are connected; the public demo includes only its labeled fixture.
+No patient or draft text is automatically forwarded to public knowledge Q&A.
+Guided supplementation shows one unresolved field at a time and distinguishes
+recorded observations from unavailable information. Saved drafts have paginated
+revision history: preview and explicitly load an older version, then append a new
+save. Request status and cancellation retain edits and discard late results.
+See [the assistant contract](docs/Assistant-Tech-Spec.md) and the current
+[verification record](docs/Source-Informed-Assistant-Verification.md) for limits and executed checks.
+The [source-informed improvement plan](docs/Source-Informed-Assistant-Plan.md)
+records the supplied reference archive, observed implementations and reuse decisions.
 
 The clinical schema currently defines 19 field types. Declaration of a field does not imply that a document contains it or that a model extracts it accurately. Clinical and prescription identity scopes remain separate. Follow-up messages are queued locally, not sent to patients. The risk and cohort examples are explicitly synthetic.
 
@@ -44,9 +63,14 @@ uv run --frozen python scripts/start.py --prepare-only
 uv run --frozen python scripts/check.py
 uv run --frozen python scripts/smoke_test.py
 uv run --frozen python scripts/release_check.py
+node --test tests/assistant_state.test.cjs
 ```
 
 `check.py` runs the portable unit suites. `smoke_test.py` starts separate loopback services, checks the integrated synthetic workflows and stops only its owned processes. It never invokes a model. `release_check.py` inspects the Git index for prohibited files and known unsafe patterns without printing matched values. The scanner is one publication control; it cannot certify that arbitrary contributed data is anonymous.
+
+The assistant state tests require Node.js 20 or newer and use no npm dependencies.
+Version 0.2.0 uses FastAPI and the existing vanilla JavaScript frontend. React and
+LangGraph are not dependencies of this release. See [the changelog](CHANGELOG.md).
 
 For the optional browser regression, start an isolated synthetic run on ports 18930/18931 and run `node scripts/ui_check.cjs` with Playwright available to Node and Microsoft Edge installed. `PLAYWRIGHT_MODULE` may point to an existing Playwright installation. `UI_CHECK_BASE`, `UI_CHECK_OUTPUT` and `UI_CHECK_CHANNEL` override the loopback URL, ignored evidence directory and browser channel. The check creates explicitly synthetic records and captures desktop, tablet and mobile screens. Use a dedicated run; never point it at a business deployment.
 

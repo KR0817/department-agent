@@ -58,10 +58,12 @@ class SmokeLifecycleTests(unittest.TestCase):
             fake_demo.stop.side_effect = stop
             client = MagicMock()
             client.__enter__.return_value = client
+            assistant_path = '/api/department/assistant/drafts/synthetic-lifecycle'
+            assistant_draft = {'revision': 3, 'draft': {'instruction': 'Synthetic lifecycle fixture'}}
 
             def get(route):
-                status = 200 if route == '/' or route.startswith('/static/') else 401
-                return Mock(status_code=status, content=raw, headers={'content-security-policy':
+                status = 200 if route in ('/', assistant_path) or route.startswith('/static/') else 401
+                return Mock(status_code=status, content=raw, json=lambda: assistant_draft, headers={'content-security-policy':
                     "script-src 'self'; object-src 'none'; frame-ancestors 'none'"})
 
             client.get.side_effect = get
@@ -74,6 +76,7 @@ class SmokeLifecycleTests(unittest.TestCase):
                     patch.object(smoke, 'clinical_flow', return_value={}), \
                     patch.object(smoke, 'knowledge_flow'), \
                     patch.object(smoke, 'prescription_flow', return_value={}), \
+                    patch.object(smoke, 'assistant_flow', return_value=(assistant_path, assistant_draft)), \
                     patch.object(smoke, 'restored_flow', side_effect=KeyboardInterrupt if interrupted else None), \
                     patch.dict(sys.modules, {'demo': fake_demo}), \
                     patch.object(sys, 'argv', ['smoke_test.py']), redirect_stdout(output):

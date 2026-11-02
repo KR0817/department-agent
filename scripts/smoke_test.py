@@ -201,6 +201,48 @@ def prescription_flow(client, site, checks):
     return {'records': records, 'nonce': initial['nonce'], 'page_hash': digest(page.content), 'commit': commit}
 
 
+def assistant_flow(client, checks):
+    root = '/api/department/assistant'
+    planned = checks.response('assistant_multi_task_request', client.post(root + '/plan',
+        json={'instruction': 'intake and prescriptions', 'task': 'auto'})).json()
+    checks.check('assistant_explicit_choice_required', planned['needs_selection'] and not planned['model_called'])
+    example = checks.response('assistant_intake_fixture', client.get('/api/department/analysis/example')).json()
+    draft = {'schema': 'department-task-v1', 'instruction': 'Synthetic assistant workflow',
+        'task': 'intake', 'data_origin': 'synthetic', 'text': example['text'], 'supplements': [],
+        'context': {'case_query': 'dryness', 'collection_revision': 1,
+                    'knowledge_source_id': '', 'knowledge_category': 'synthetic'}}
+    recognized = checks.response('assistant_existing_parser', client.post(root + '/prepare', json=draft)).json()
+    checks.check('assistant_missing_observations', len(recognized['records']) == 3 and bool(recognized['missing']))
+    draft['supplements'] = [{'record_id': recognized['records'][0]['record_id'], 'field': 'pulse',
+        'value': 'Synthetic pulse observation', 'origin': 'clinician', 'status': 'recorded'}]
+    prepared = checks.response('assistant_supplement_preparation', client.post(root + '/prepare', json=draft)).json()
+    checks.check('assistant_original_provenance_preserved', prepared['original_records'] == recognized['records']
+        and prepared['source_sha256'] == digest(example['text'].encode('utf-8'))
+        and prepared['records'][0]['pulse'] == 'Synthetic pulse observation' and not prepared['review_confirmed'])
+    path = root + '/drafts/' + str(uuid.uuid4())
+    saved = checks.response('assistant_save_draft', client.post(path, json={'expected_revision': 0, 'draft': draft})).json()
+    retried = checks.response('assistant_repeat_save', client.post(path, json={'expected_revision': 0, 'draft': draft})).json()
+    checks.check('assistant_save_idempotent', saved == retried and saved['revision'] == 1)
+    checks.response('assistant_stale_save_rejected', client.post(path, json={'expected_revision': 0,
+        'draft': {**draft, 'instruction': 'Different synthetic task'}}), 409)
+    updated = checks.response('assistant_append_second_version', client.post(path, json={'expected_revision': 1,
+        'draft': {**draft, 'instruction': 'Second synthetic task'}})).json()
+    history = checks.response('assistant_version_history', client.get(path + '/history')).json()
+    checks.check('assistant_history_newest_first', [row['revision'] for row in history['versions']] == [2, 1])
+    old = checks.response('assistant_read_original_version', client.get(path + '/revisions/1')).json()
+    checks.check('assistant_original_version_unchanged', old == saved)
+    saved = checks.response('assistant_restore_appends_version', client.post(path,
+        json={'expected_revision': updated['revision'], 'draft': old['draft']})).json()
+    checks.check('assistant_restore_keeps_content_and_advances_version', saved['revision'] == 3 and saved['draft'] == draft)
+    result = checks.response('assistant_saved_case_retrieval', client.post(root + '/cases', json={'query': 'dryness'})).json()
+    checks.check('assistant_retrieves_only_committed_collection', result['revision'] == 1 and result['total'] == 2
+        and 'nonce' not in result and result['data_origin'] == 'synthetic')
+    library = checks.response('assistant_knowledge_categories', client.get(root + '/library')).json()
+    counts = {category['id']: category['count'] for category in library['categories']}
+    checks.check('assistant_empty_corpora_are_explicit', counts['classics'] == counts['formula'] == 0 and counts['synthetic'] == 1)
+    return path, saved
+
+
 def restored_flow(client, clinical, prescription, checks):
     record = checks.response('restart_clinical_job', client.get(clinical['path'])).json()
     checks.check('restart_clinical_archive_and_review_preserved', record['state'] == 'published'
@@ -276,6 +318,7 @@ def main():
                 clinical = clinical_flow(client, checks)
                 knowledge_flow(client, checks)
                 prescription = prescription_flow(client, site, checks)
+                assistant_path, assistant_draft = assistant_flow(client, checks)
             demo.stop(processes)
             checks.check('owned_services_stopped_for_restart', all(p.poll() is not None for p in processes))
             processes = []
@@ -285,6 +328,8 @@ def main():
                 checks.response('restart_new_session_required', client.get('/api/jobs'), 401)
                 checks.response('restart_demo_session', client.get('/'))
                 restored_flow(client, clinical, prescription, checks)
+                restored = checks.response('restart_assistant_draft', client.get(assistant_path)).json()
+                checks.check('restart_assistant_context_and_supplements_preserved', restored == assistant_draft)
             checks.completed = True
     except Exception:
         # Deliberately suppress request bodies, nonce values, identities and exception details.

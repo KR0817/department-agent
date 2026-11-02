@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="/static/style.css">
   <link rel="stylesheet" href="/static/department.css">
   <script defer src="/static/department.js"></script>
+  <script defer src="/static/assistant.js"></script>
   <script type="module" src="/static/app.js"></script>
   <script type="module" src="/static/ui.js"></script>
 </head>
@@ -74,6 +75,7 @@
     <nav id="primary_navigation" class="primary-nav" aria-label="主导航">
       <div class="navigation-brand"><span class="navigation-monogram" aria-hidden="true">科</span><div><strong>科室 Agent</strong><small>临床 · 证据 · 分析</small></div><button id="navigation_close" type="button" class="text-button" aria-label="关闭主导航">×</button></div>
       <p class="navigation-label">科室工作空间</p>
+      <button id="nav_assistant" type="button" aria-current="false" title="科室助手"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H9l-5 4zM8 8h8M8 12h5"/></svg><span>科室助手</span></button>
       <button id="nav_overview" type="button" aria-current="false" title="患者总览"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/></svg><span>患者总览</span></button>
       <button id="nav_workbench" type="button" aria-current="page" title="科室资料工作台"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h5"/></svg><span>科室资料工作台</span></button>
       <button id="nav_knowledge" type="button" aria-current="false" title="知识问答"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5C9 3 6 3 3 4v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1zm0 0v15"/></svg><span>知识问答</span></button>
@@ -157,7 +159,7 @@
     </div>
   </main>
   <footer id="footer_note">本机处理 · 原文与更正历史保留 · 人工复核后归档</footer>
-  <footer><a href="https://github.com/KR0817/department-agent/tree/v0.1.1" target="_blank" rel="noopener noreferrer">Source code v0.1.1 · AGPL-3.0-only</a></footer>
+  <footer><a href="https://github.com/KR0817/department-agent/tree/v0.2.0" target="_blank" rel="noopener noreferrer">Source code v0.2.0 · AGPL-3.0-only</a></footer>
 </body>
 </html>
 

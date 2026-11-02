@@ -1093,4 +1093,8 @@ def fixture(name: str):
 
 from department import router as department_router
 app.include_router(department_router)
+import department_assistant
+app.state.assistant_db = DATA / 'assistant.sqlite'
+department_assistant.initialize(app.state.assistant_db)
+app.include_router(department_assistant.router)
 app.mount('/static', StaticFiles(directory=ROOT / 'static'), name='static')

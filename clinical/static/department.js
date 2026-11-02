@@ -260,5 +260,12 @@
       box.replaceChildren(controls,context,frame);
     }catch(exc){if(token===epoch&&ctx.isCurrent()){box.replaceChildren();ctx.error(box,exc);box.append(button(el,'重新连接原工作区',()=>renderFull(box,ctx)));}}
   }
-  window.Department=Object.freeze({render,renderFull,clear});
+  function useAssistantRecords(records,origin,text) {
+    state.records=structuredClone(records);state.origin=origin;state.text=text;
+    state.recognition={records:state.records};state.excluded=new Set();state.confirmed=false;state.result=null;state.revision++;
+  }
+  function selectKnowledgeSource(sourceId) {
+    state.source=sourceId;state.disease='all';state.search='';state.question='';state.answer=null;state.answerQuestion='';
+  }
+  window.Department=Object.freeze({render,renderFull,clear,useAssistantRecords,selectKnowledgeSource});
 })();
