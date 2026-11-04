@@ -4,6 +4,10 @@ import os
 import pathlib
 import re
 import threading
+import copy
+import time
+import uuid
+from datetime import datetime, timezone
 
 from department_sources import load_package
 
@@ -43,6 +47,12 @@ class Knowledge:
         self._lock = threading.Lock()
         self._extractor = None
         self._library = None
+        self._consultation_index = None
+        # ponytail: one inference at a time across modes; use a bounded job queue
+        # if concurrent departmental use outgrows this local workbench.
+        self._model_lock = threading.Lock()
+        self._jobs_lock = threading.Lock()
+        self._jobs = {}
 
     def _ready(self):
         with self._lock:
@@ -70,7 +80,14 @@ class Knowledge:
             return extractor
 
     def catalog(self):
-        return _map_locators(self._ready()['catalog']())
+        from department_llm import provider_catalog
+        from expert_graph import VERSION
+        return {**_map_locators(self._ready()['catalog']()),
+                'collaboration': {'enabled': self._mode == 'fulltext', 'provider': 'local',
+                                  'providers': ['local', 'kimi'], 'modes': ['local', 'local_kimi', 'all_kimi'], 'workflow': VERSION},
+                'consultation': {'enabled': self._mode == 'fulltext',
+                                 'providers': provider_catalog(self._mode == 'fulltext'),
+                                 'input_scope': 'public_topics_only'}}
 
     def library(self):
         self._ready()
@@ -78,6 +95,8 @@ class Knowledge:
 
     def extract(self, payload):
         extractor = self._ready()
+        if not self._model_lock.acquire(blocking=False):
+            return {'status': 'busy', 'model_called': False, 'extracts': [], 'clinical_approval': None}
         try:
             return _map_locators(extractor['extract'](payload))
         except ValueError as error:
@@ -88,6 +107,138 @@ class Knowledge:
             raise KnowledgeError(400, 'invalid_request') from None
         except OSError:
             raise KnowledgeError(503, 'fulltext_unavailable') from None
+        finally:
+            self._model_lock.release()
+
+    def consult(self, payload):
+        from department_consultation import consult, validate_input
+        from department_llm import ModelError
+        try:
+            value = validate_input(payload, self.catalog())
+        except ValueError as error:
+            stale = str(error) == 'stale_fulltext_index'
+            raise KnowledgeError(409 if stale else 400,
+                                 'stale_fulltext_index' if stale else 'invalid_request') from None
+        base = {'kind': value.kind, 'subject': value.subject, 'provider': value.provider,
+                'model_called': False, 'sections': [], 'references': [], 'clinical_approval': None}
+        if self._mode != 'fulltext':
+            return {**base, 'status': 'model_disabled'}
+        if not self._model_lock.acquire(blocking=False):
+            return {**base, 'status': 'busy'}
+        try:
+            if self._consultation_index is None:
+                self._consultation_index = importlib.import_module('app.fulltext').load_combined_index()
+            if self._consultation_index['sha256'] != value.index_sha256:
+                raise KnowledgeError(409, 'stale_fulltext_index')
+            return consult(value, self._consultation_index)
+        except ModelError as exc:
+            return {**base, 'status': 'model_unavailable', 'error': exc.code}
+        except (OSError, ValueError, KeyError, TypeError):
+            raise KnowledgeError(503, 'fulltext_unavailable') from None
+        finally:
+            self._model_lock.release()
+
+    def _prune_jobs(self):
+        # ponytail: bounded ephemeral jobs; durable queues belong to a later multi-user deployment.
+        finished = sorted(((key, row) for key, row in self._jobs.items() if row['finished'] is not None),
+                          key=lambda item: item[1]['finished'])
+        for number, (key, row) in enumerate(finished):
+            if time.monotonic() - row['finished'] > 1800 or number < len(finished) - 16:
+                del self._jobs[key]
+
+    def _job(self, identity, owner):
+        self._prune_jobs()
+        row = self._jobs.get(identity)
+        if row is None or row['owner'] != owner:
+            raise KnowledgeError(404, 'collaboration_not_found')
+        return row
+
+    def collaboration(self, identity, owner):
+        with self._jobs_lock:
+            return copy.deepcopy(self._job(identity, owner)['public'])
+
+    def cancel_collaboration(self, identity, owner):
+        with self._jobs_lock:
+            row = self._job(identity, owner)
+            if row['finished'] is None:
+                row['cancel'].set()
+                row['public']['status'] = 'cancel_requested'
+            return copy.deepcopy(row['public'])
+
+    def collaborate(self, payload, owner):
+        from department_consultation import validate_input
+        from expert_graph import ExpertInput, ROLES, VERSION, collaborate, guard
+        from department_llm import ModelError, model_configuration
+        try:
+            value = validate_input(payload, self.catalog(), input_type=ExpertInput)
+            if value.provider not in ('local', 'kimi'):
+                raise ValueError('unsupported_expert_provider')
+            if value.expert_mode == 'all_kimi' and value.provider != 'kimi':
+                raise ValueError('unsupported_expert_provider')
+        except ValueError as exc:
+            stale = str(exc) == 'stale_fulltext_index'
+            raise KnowledgeError(409 if stale else 400, 'stale_fulltext_index' if stale else 'invalid_request') from None
+        base = {'kind': value.kind, 'subject': value.subject, 'provider': value.provider, 'model_called': False,
+                'clinical_approval': None, 'workflow': VERSION}
+        if self._mode != 'fulltext':
+            return {**base, 'status': 'model_disabled'}
+        blocked = 'public_topic_required' if value.provider == 'kimi' and not value.public_topic_confirmed else guard(value)
+        if value.expert_mode == 'all_kimi' and not value.public_evidence_confirmed:
+            blocked = 'public_evidence_required'
+        if blocked:
+            return {**base, 'status': blocked}
+        if value.provider == 'kimi':
+            try:
+                remote = model_configuration('kimi')
+                if not remote['configured']:
+                    raise ModelError('api_key_missing')
+                if value.expert_mode == 'all_kimi' and remote['model'] != 'kimi-k3.1-pro':
+                    raise ModelError('kimi31_required')
+            except ModelError as exc:
+                return {**base, 'status': 'model_unavailable', 'error': exc.code}
+        if not self._model_lock.acquire(blocking=False):
+            return {**base, 'status': 'busy'}
+        try:
+            if self._consultation_index is None:
+                self._consultation_index = importlib.import_module('app.fulltext').load_combined_index()
+            if self._consultation_index['sha256'] != value.index_sha256:
+                raise KnowledgeError(409, 'stale_fulltext_index')
+            identity = uuid.uuid4().hex
+            row = {'owner': owner, 'cancel': threading.Event(), 'finished': None,
+                   'public': {'job_id': identity, 'status': 'running', 'stage': 'queued',
+                              'created_at': datetime.now(timezone.utc).isoformat(),
+                              'roles': {role: 'pending' for role in ROLES}, 'result': None}}
+            with self._jobs_lock:
+                self._prune_jobs()
+                self._jobs[identity] = row
+                initial = copy.deepcopy(row['public'])
+
+            def progress(patch):
+                with self._jobs_lock:
+                    row['public'].update(copy.deepcopy(patch))
+
+            def work():
+                try:
+                    result = collaborate(value, self._consultation_index, progress=progress, cancelled=row['cancel'].is_set)
+                except Exception:
+                    # Never put exception text, prompts, source text or model output into job errors/logs.
+                    result = {**base, 'status': 'failed', 'error': 'collaboration_unavailable'}
+                finally:
+                    self._model_lock.release()
+                with self._jobs_lock:
+                    if row['cancel'].is_set():
+                        result = {**base, 'status': 'cancelled'}
+                    row['finished'] = time.monotonic()
+                    row['public'].update(status=result['status'], stage='finished', result=result)
+                    for role, status in row['public']['roles'].items():
+                        if status in ('pending', 'running'):
+                            row['public']['roles'][role] = 'skipped'
+                    self._prune_jobs()
+            threading.Thread(target=work, name='knowledge-collaboration', daemon=True).start()
+            return initial
+        except BaseException:
+            self._model_lock.release()
+            raise
 
     def _document(self, kind, chunk_id):
         if not isinstance(chunk_id, str) or not re.fullmatch(r'ft_[a-f0-9]{24}', chunk_id):

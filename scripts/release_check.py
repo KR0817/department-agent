@@ -17,7 +17,7 @@ ROOT_FILES = {
     'docker-compose.yml', 'Makefile', 'Start-Department-Agent.ps1',
 }
 ROOT_DIRS = {'clinical', 'knowledge', 'prescription', 'scripts', 'tests', 'docs',
-             'licenses', '.github'}
+             'licenses', '.github', 'frontend'}
 EXCLUDED_DIRS = {'.git', '.venv', 'venv', 'node_modules', '__pycache__', '.pytest_cache',
                  '.mypy_cache', '.ruff_cache', '.uv-cache', 'work', 'outputs',
                  'evidence', 'runtime', 'runtime_data', 'restored_runs', 'private',
@@ -96,6 +96,8 @@ def path_rule(path: str) -> str | None:
         return 'invalid_repository_path'
     if any(part.lower() in EXCLUDED_DIRS for part in parts[:-1]):
         return 'private_or_generated_directory'
+    if path.startswith('clinical/static/consultation/'):
+        return 'generated_frontend_bundle'
     if PRIVATE_NAME.fullmatch(pure.name) or pure.suffix.lower() in {'.pem', '.key', '.pfx', '.p12', '.jks', '.keystore'}:
         return 'credential_filename'
     if DATABASE_NAME.search(pure.name):

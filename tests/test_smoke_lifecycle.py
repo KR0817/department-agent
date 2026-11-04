@@ -40,6 +40,10 @@ class SmokeLifecycleTests(unittest.TestCase):
             (clinical / 'static').mkdir(parents=True)
             raw = b'<html>SYNTHETIC lifecycle test</html>'
             (clinical / 'static/index.html').write_bytes(raw)
+            assets = clinical / 'static/consultation'
+            assets.mkdir()
+            for name in ('entry.js', 'consultation.css'):
+                (assets / name).write_bytes(raw)
             fake_demo = Mock()
             owned = []
 
@@ -59,7 +63,8 @@ class SmokeLifecycleTests(unittest.TestCase):
             client = MagicMock()
             client.__enter__.return_value = client
             assistant_path = '/api/department/assistant/drafts/synthetic-lifecycle'
-            assistant_draft = {'revision': 3, 'draft': {'instruction': 'Synthetic lifecycle fixture'}}
+            assistant_draft = {'revision': 3, 'draft': {'instruction': 'Synthetic lifecycle fixture', 'supplements': []}}
+            client.post.return_value = Mock(status_code=200, json=lambda: {'stage': 'question', 'prepared': {'supplements': []}})
 
             def get(route):
                 status = 200 if route in ('/', assistant_path) or route.startswith('/static/') else 401

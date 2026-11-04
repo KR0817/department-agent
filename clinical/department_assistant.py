@@ -282,6 +282,13 @@ async def list_drafts(request: Request):
     return await run_in_threadpool(drafts, request.app.state.assistant_db, owner(request))
 
 
+@router.post('/consultation')
+async def consultation_turn(request: Request):
+    owner(request)
+    from consultation_graph import consultation
+    return await consultation(await payload(request, 524288))
+
+
 @router.get('/drafts/{identity}')
 async def get_draft(identity: str, request: Request):
     return await run_in_threadpool(drafts, request.app.state.assistant_db, owner(request), identity)

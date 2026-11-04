@@ -106,6 +106,31 @@ async def knowledge_extract(request: Request):
     return await invoke('knowledge', 'extract', await payload(request, 32768))
 
 
+@router.post('/knowledge/consult')
+async def knowledge_consult(request: Request):
+    return await invoke('knowledge', 'consult', await payload(request, 16384))
+
+
+@router.post('/knowledge/collaborate')
+async def knowledge_collaborate(request: Request):
+    from department_assistant import owner
+    return await invoke('knowledge', 'collaborate', await payload(request, 16384), owner(request))
+
+
+@router.get('/knowledge/collaborations/{identity}')
+async def knowledge_collaboration(identity: str, request: Request):
+    from department_assistant import owner
+    return await invoke('knowledge', 'collaboration', identity, owner(request))
+
+
+@router.post('/knowledge/collaborations/{identity}/cancel')
+async def cancel_knowledge_collaboration(identity: str, request: Request):
+    from department_assistant import owner
+    if await payload(request, 1024) != {}:
+        raise HTTPException(422, 'Empty object required')
+    return await invoke('knowledge', 'cancel_collaboration', identity, owner(request))
+
+
 @router.get('/knowledge/page/{chunk_id}')
 async def knowledge_page(chunk_id: str):
     content, media_type = await invoke('knowledge', 'page', chunk_id)

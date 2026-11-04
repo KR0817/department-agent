@@ -90,7 +90,7 @@
     side.append(el('p','本机任务','eyebrow'),el('h2','保存与接续'),status,save,fresh,historyButton,history,el('h3','已保存草稿'),list);
     const shortcuts=el('div',null,'assistant-shortcuts');shortcuts.append(link(el,'临床资料工作台','#workbench'),link(el,'知识问答','#knowledge'),link(el,'完整处方工作台','#analysis'),link(el,'快速访次核对','#analysis-quick'));
     side.append(el('h3','直接打开'),shortcuts,el('p','草稿按账户保存；公开演示共用合成操作者。','department-help'));
-    const intro=el('div',null,'assistant-intro');intro.append(el('p','科室助手','eyebrow'),el('h2','从一项具体工作开始'),el('p','整理资料、补齐信息、查阅依据，接续到原有业务工作台。','department-help'));
+    const intro=el('div',null,'assistant-intro');intro.append(el('p','科室助手','eyebrow'),el('h2','从一项具体工作开始'),el('p','整理资料、补齐信息、查阅依据，接续到原有业务工作台。','department-help'),link(el,'进入逐项问诊采集','#consultation'));
     const instruction=el('textarea');instruction.id='assistant_instruction';instruction.maxLength=1000;instruction.rows=2;instruction.value=state.draft.instruction;instruction.placeholder='例如：整理这份门诊记录并列出缺失信息';instruction.oninput=()=>{state.draft.instruction=instruction.value;state.plan=null;changed();};
     const task=select(el,tasks,state.draft.task,'assistant_task');
     const planResult=el('div');planResult.id='assistant_plan';planResult.setAttribute('role','status');

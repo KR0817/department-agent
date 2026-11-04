@@ -2,6 +2,7 @@ const $ = id => document.getElementById(id);
 const states = {queued:'排队中',reading:'正在读取 / OCR',extracting:'正在生成候选',review:'待核对归档',blocked:'需要处理',failed:'提取失败，可重试',publishing:'正在归档',partial:'部分归档，待继续',published:'已归档'};
 const actions = {accept:'接受原值',modify:'修改后接受',reject:'拒绝',defer:'暂缓'};
 const drafts = new Map();
+let consultationUI=null;
 let selected=null, tab='job', signature='', fields={}, busy=false, demo=false;
 let currentUser=null, setupRequired=false, documentMode='synthetic', sessionVersion=0;
 let uploadBatch=[], uploading=false, uploadRun=0, uploadController=null;
@@ -585,10 +586,11 @@ function timelineFact(fact) {
 async function show(which,options={}) {
   if(!currentUser) return;
   if(which==='admin'&&currentUser.role!=='admin') return;
+  consultationUI?.unmount();
   tab=which;const version=++viewVersion;
   sourceReview?.dialog.close();
   const patientSection=['overview','patient','record'].includes(which);
-  const departmentSection=['assistant','knowledge','analysis','analysis-quick'].includes(which);
+  const departmentSection=['assistant','consultation','knowledge','analysis','analysis-quick'].includes(which);
   activePatientId=['patient','record'].includes(which)?options.patientId:null;
   if(!patientSection&&!departmentSection&&which!=='account') workbenchTab=which;
   const hash=departmentSection?'#'+which:which==='overview'?'#overview':which==='patient'?'#patient/'+encodeURIComponent(activePatientId):which==='record'?'#record/'+encodeURIComponent(activePatientId):'#workbench';
@@ -598,6 +600,7 @@ async function show(which,options={}) {
   $('nav_overview').setAttribute('aria-current',patientSection?'page':'false');$('nav_workbench').setAttribute('aria-current',!patientSection&&!departmentSection?'page':'false');
   $('nav_knowledge').setAttribute('aria-current',which==='knowledge'?'page':'false');$('nav_analysis').setAttribute('aria-current',which.startsWith('analysis')?'page':'false');
   $('nav_assistant').setAttribute('aria-current',which==='assistant'?'page':'false');
+  $('nav_consultation').setAttribute('aria-current',which==='consultation'?'page':'false');
   $('workspace_title').textContent=which==='knowledge'?'科室知识问答':which==='analysis'?'门诊处方与随访分析':which==='analysis-quick'?'快速访次核对':['patient','record'].includes(which)?'患者详情':which==='overview'?'患者总览':'科室资料工作台';
   $('workspace_eyebrow').textContent=which==='knowledge'?'提出问题 · 查阅全文 · 核对依据':which==='analysis'?'原处方工作区 · 汇总分析 · 医案传承 · 导入与保存':which==='analysis-quick'?'医案识别 · 逐项核对 · 相邻处方对照':patientSection?'患者档案 · 资料来源 · 访视与指标':'批量提取 · 核对异常 · 纵向归档';
   for(const name of tabs) {
@@ -615,6 +618,17 @@ async function show(which,options={}) {
   }
   box.classList.toggle('department',departmentSection);
   if(departmentSection) {
+    if(which==='consultation') {
+      $('workspace_title').textContent='问诊信息采集';$('workspace_eyebrow').textContent='记录原文 · 逐项追问 · 人工复核 · 接续分析';
+      box.replaceChildren(loadingState('正在打开采集页面…'));
+      try {
+        consultationUI??=await import('/static/consultation/entry.js');
+        if(currentUser&&tab===which&&version===viewVersion) consultationUI.render(box,{api,isCurrent:()=>Boolean(currentUser)&&tab===which&&version===viewVersion});
+      } catch {
+        if(currentUser&&tab===which&&version===viewVersion) box.replaceChildren(el('p','采集页面暂未就绪，请管理员按 README 完成前端构建后刷新。原有科室助手和业务工作台仍可使用。','department-danger'));
+      }
+      return;
+    }
     if(which==='assistant') {
       $('workspace_title').textContent='科室助手';$('workspace_eyebrow').textContent='整理资料 · 补全信息 · 查阅依据 · 接续分析';
       await window.DepartmentAssistant.render(box,{api,el,error,isCurrent:()=>Boolean(currentUser)&&tab===which&&version===viewVersion});
@@ -673,7 +687,7 @@ async function show(which,options={}) {
 }
 function routeFromHash() {
   if(!currentUser) return;
-  if(['#assistant','#knowledge','#analysis','#analysis-quick'].includes(location.hash)) return show(location.hash.slice(1),{fromRoute:true});
+  if(['#assistant','#consultation','#knowledge','#analysis','#analysis-quick'].includes(location.hash)) return show(location.hash.slice(1),{fromRoute:true});
   if(location.hash==='#overview') return show('overview',{fromRoute:true});
   if(location.hash.startsWith('#patient/')) {
     let patientId='';try {patientId=decodeURIComponent(location.hash.slice(9));} catch {patientId='';}
@@ -1786,6 +1800,7 @@ function configureAuth(setup) {
   $('auth_form').hidden=false;$('auth_retry').hidden=true;$('auth_recovery').hidden=setup;
 }
 function signedOut(message='') {
+  consultationUI?.clear();
   window.Department?.clear();
   window.DepartmentAssistant?.clear();
   authVersion++;
@@ -2014,6 +2029,7 @@ for(const name of tabs) $('tab_'+name).onclick=()=>show(name);
 $('nav_overview').onclick=()=>show('overview');$('nav_workbench').onclick=()=>show(workbenchTab);
 $('nav_knowledge').onclick=()=>show('knowledge');$('nav_analysis').onclick=()=>show('analysis');
 $('nav_assistant').onclick=()=>show('assistant');
+$('nav_consultation').onclick=()=>show('consultation');
 window.addEventListener('hashchange',routeFromHash);
 async function health() {
   if(!currentUser) return;

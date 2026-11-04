@@ -3,7 +3,9 @@
   let epoch = 0;
   let fullContainer = null;
   let collapseCanvas = null;
+  let knowledgeView = 0;
   const initial = () => ({question:'',disease:'all',source:'',search:'',catalog:null,answer:null,
+    mode:'literature',subject:'',provider:'local',expertProvider:'local',publicTopic:false,publicEvidence:false,knowledgeRevision:0,collaborative:false,answerReviewed:null,
     text:'',origin:'synthetic',records:[],excluded:new Set(),confirmed:false,result:null,recognition:null,revision:0,answerQuestion:''});
   let state = initial();
   const controllers = new Set();
@@ -34,13 +36,132 @@
     if(typeof url!=='string'||!/^\/api\/department\/knowledge\/(page|section)\/[A-Za-z0-9_-]+$/.test(url))return el('span','来源定位暂不可用');
     const a=el('a',text);a.href=url;a.target='_blank';a.rel='noopener noreferrer';return a;
   }
-  async function request(ctx,path,body) {
-    const controller=new AbortController();controllers.add(controller);
+  async function request(ctx,path,body,controller=new AbortController()) {
+    controllers.add(controller);
     try {return await ctx.api('department/'+path,body,controller.signal);}finally{controllers.delete(controller);}
+  }
+  function pollDelay(signal) {
+    return new Promise((resolve,reject)=>{
+      if(signal.aborted){reject(new DOMException('Aborted','AbortError'));return;}
+      const abort=()=>{clearTimeout(timer);reject(new DOMException('Aborted','AbortError'));};
+      const timer=setTimeout(()=>{signal.removeEventListener('abort',abort);resolve();},1200);
+      signal.addEventListener('abort',abort,{once:true});
+    });
+  }
+  const expertLabels={tcm:'中医知识',evidence:'文献证据',pharmacy:'药学安全',synthesis:'汇总'};
+  const expertStatuses={pending:'等待中',running:'处理中',completed:'已完成',insufficient:'依据不足',failed:'未完成',skipped:'已跳过'};
+  function expertModel(info){return info?' · '+(info.provider==='kimi'?'Kimi API':'本地')+' / '+info.model:'';}
+  function renderExperts(target,ctx,answer) {
+    const {el}=ctx;
+    target.append(tag(el,answer.execution==='all_kimi'?'专家协作 · 全部 Kimi 3.1 · 试用':answer.provider==='kimi'?'专家协作 · 本地 + Kimi · 试用':'专家协作 · 本地试用'),el('h3',answer.subject||'本次协作'));
+    if(state.answerQuestion)target.append(el('p',state.answerQuestion,'department-question-card'));
+    const statuses={completed:'各角色处理完成，等待人工核对。',partial:'部分角色未完成，以下仅展示已通过格式与来源检查的结果。',
+      insufficient:'本轮信息不足，请调整问题或补充来源。',failed:'本轮协作未完成，请核对模型调用状态后重试。',cancelled:'已停止后续协作。',
+      model_unavailable:'所选模型尚未配置或配置无效，请由管理员核对。',
+      public_evidence_required:'全部 Kimi 模式需要确认发送选中的公开文献片段和角色报告。',
+      source_unavailable:'原文校验未通过，本轮生成内容已撤回。',busy:'本地模型正在处理其他任务，请稍后再试。',
+      model_disabled:'连接本地全文库后可使用专家协作。',public_topic_required:'请输入通用知识问题，移除身份标识和病例资料。',
+      needs_clinician:'个体处方与用药调整请由接诊医师结合完整资料评估。',urgent_care:'误服、过量服药或严重不适请立即就医，不要等待本页回答。'};
+    target.append(el('p',statuses[answer.status]||'本次未取得完整结果。','department-help'));
+    if(answer.model_calls?.length){
+      const calls=el('ul',null,'department-expert-progress');
+      const errors={api_authentication_failed:'API 身份验证失败',api_quota_exceeded:'API 额度不足',api_rate_limited:'API 限流',api_timeout:'API 超时',api_key_missing:'API 密钥未配置',api_invalid_response:'API 输出不完整',api_request_failed:'API 请求失败',api_response_limit:'API 响应超限',public_materials_required:'含身份标记，已阻止发送'};
+      for(const role of Object.keys(expertLabels)){
+        const call=answer.model_calls.find(item=>item.role===role),info=answer.role_models?.[role];
+        calls.append(el('li',expertLabels[role]+expertModel(info)+'：'+(expertStatuses[answer.roles?.[role]]||'未完成')+
+          (call?.provider_error?'（'+(errors[call.provider_error]||'API 调用失败')+'）':call?.error==='invalid_output'?'（输出检查未通过）':call?.error==='transport_unavailable'?'（模型连接失败）':'')));
+      }target.append(calls);
+    }
+    if(!answer.reports||!Object.keys(answer.reports).length)return;
+    target.append(el('p',(answer.execution==='all_kimi'?'四个角色均使用 Kimi 3.1。已发送本次通用问题、选中的公开文献片段及角色报告；原文检索和核对在本机完成。':answer.provider==='kimi'?'Kimi 处理通用知识，本地模型处理文献、药学审查和汇总。仅本次名称和通用问题发送至 API。':'同一模型按不同职责协作。')+'意见一致不等于独立验证。文献引用已核对片段身份，结论支持程度仍待人工核对。','department-help'));
+    if(answer.retrieval_budget?.omitted_for_public_scope)target.append(el('p','另有 '+answer.retrieval_budget.omitted_for_public_scope+' 个片段因缺少公开文献标识或含身份标记，未发送至 API。','department-help'));
+    if(answer.retrieval_budget?.omitted_for_budget)target.append(el('p','本轮仅纳入适合本机处理的完整片段，另有 '+answer.retrieval_budget.omitted_for_budget+' 个候选片段超出预算；可缩小文献范围再查。','department-help'));
+    const allClaims=Object.values(answer.reports).flatMap(report=>report.claims||[]);
+    if(answer.synthesis){
+      const summary=el('article',null,'department-answer');summary.append(el('h3','汇总意见'),el('p',answer.synthesis.overview,'department-prose'));
+      const selected=el('ul');for(const id of answer.synthesis.selected_claim_ids||[]){const claim=allClaims.find(row=>row.id===id);if(claim)selected.append(el('li',claim.text+' ['+id+']'));}summary.append(selected);
+      for(const issue of answer.synthesis.unresolved||[])summary.append(el('p','待解决：'+issue,'department-help'));target.append(summary);
+    }
+    const concerns=answer.reports.pharmacy?.concerns||[];
+    const caution=el('section',null,'department-evidence-card');caution.append(el('h3','药学审查与分歧'));
+    caution.append(el('p','当前资料库尚未覆盖完整药品说明书和相互作用数据库；未发现问题不代表已确认安全。','department-help'));
+    for(const concern of concerns)caution.append(el('p',concern.text+(concern.claim_ids?.length?' ['+concern.claim_ids.join(', ')+']':'')));
+    if(!concerns.length)caution.append(el('p',answer.roles?.pharmacy==='failed'?'药学角色未完成，风险评估缺失。':'本轮未返回具体审查意见，仍需按原始资料核对。','department-help'));target.append(caution);
+    for(const role of ['tcm','evidence','pharmacy']){
+      const report=answer.reports[role];if(!report)continue;
+      const article=el('details',null,'department-answer');article.open=true;
+      article.append(el('summary',expertLabels[role]+expertModel(answer.role_models?.[role])+' · '+(expertStatuses[answer.roles?.[role]]||'未完成')));
+      for(const claim of report.claims||[]){
+        article.append(el('p',claim.text,'department-prose'),el('p',claim.id+' · '+(claim.basis==='source'?'来源引文已逐字匹配 · 支持关系待核对':'模型知识 · 尚无本地引文支持'),'department-help'));
+        if(claim.quote){const quote=el('details');quote.append(el('summary','展开完整来源片段'),el('blockquote',claim.quote));article.append(quote);const ref=(answer.references||[]).find(row=>row.id===claim.passage_id);if(ref)article.append(sourceLink(el,ref.page_url,'核对这条原文 ↗'));}
+      }
+      for(const issue of report.uncertainties||[])article.append(el('p','待核对：'+issue,'department-help'));
+      if(report.status==='failed')article.append(el('p','未取得通过检查的输出，未以其他角色结果补充。','department-help'));target.append(article);
+    }
+    if(answer.references?.length){
+      const refs=el('details',null,'department-evidence-card');refs.append(el('summary','本地相关文献（'+answer.references.length+'）'));
+      for(const ref of answer.references)refs.append(el('h4',ref.title_zh||ref.title),el('blockquote',ref.quote),sourceLink(el,ref.page_url));target.append(refs);
+    }
+    const review=el('input');review.type='checkbox';review.id='department_expert_review';review.checked=Boolean(state.answerReviewed);
+    review.onchange=()=>{state.answerReviewed=review.checked?new Date().toISOString():null;};
+    const reviewField=field(el,'我已阅读并核对本次结果（仅记录人工核对状态，不授予临床审批）。',review);reviewField.className='department-check';target.append(reviewField);
+    target.append(button(el,'下载本次协作记录',()=>{
+      const record={result:answer,question:state.answerQuestion,user_review:{reviewed_at:state.answerReviewed,clinical_approval:null}};
+      const url=URL.createObjectURL(new Blob([JSON.stringify(record,null,2)],{type:'application/json'}));const a=el('a');a.href=url;a.download='expert-review-'+answer.result_sha256?.slice(0,12)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    }));
+    target.append(details(el,'流程与版本记录',{workflow:answer.workflow,trace:answer.trace,model:answer.model,model_calls:answer.model_calls,
+      elapsed_seconds:answer.elapsed_seconds,input_sha256:answer.input_sha256,index_sha256:answer.index_sha256,prompt_sha256:answer.prompt_sha256,result_sha256:answer.result_sha256}));
+  }
+  function renderConsultation(target,ctx,answer) {
+    const {el}=ctx;
+    const providers={local:'本地模型',deepseek:'DeepSeek API',kimi:'Kimi API'};
+    const statuses={
+      model_disabled:'当前为合成演示。连接本地全文库后可使用药材与方剂咨询。',
+      busy:'模型正在处理其他问题，请稍后再试。',
+      model_unavailable:'模型暂不可用，请检查所选服务的配置后重试。',
+      invalid_model_output:'回答格式或内容检查未通过，本次未展示生成内容。请调整问题后重试。',
+      source_unavailable:'本地来源校验未通过，请核对文献文件。',
+      needs_clinician:'本页提供药材与方剂知识查询。个体选方、剂量或用药调整请结合完整病史由接诊医师评估。',
+      public_topic_required:'API 咨询仅接收通用问题。请移除姓名、联系方式、证件或病案标识，并确认输入范围。',
+      urgent_care:'如已发生误服、过量服药或严重不适，请立即联系当地急救或就近急诊，携带药品包装并说明服用时间；不要等待本页生成用药建议。'
+    };
+    const errors={api_key_missing:'所选 API 尚未配置服务端密钥，请由管理员配置后重启工作台。',
+      invalid_model_configuration:'模型配置无效，请由管理员核对。',api_authentication_failed:'API 身份验证失败，请由管理员核对密钥和权限。',
+      api_quota_exceeded:'API 账户额度不足，请核对服务商账户。',api_rate_limited:'API 请求受到限流，请稍后再试。',
+      api_timeout:'API 等待超时，尚未取得完整回答。',api_request_failed:'API 请求失败，请核对服务可用性和模型名称。',
+      api_invalid_response:'API 未返回完整回答，本次未展示生成内容。',api_response_limit:'API 响应超过时间或大小限制。'};
+    target.append(tag(el,answer.kind==='herb'?'药材咨询':'方剂咨询'),tag(el,providers[answer.provider]||'模型咨询'));
+    const question=el('div',null,'department-question-card');question.append(el('p',answer.subject||'本次咨询','eyebrow'),el('p',state.answerQuestion));target.append(question);
+    if(!['answer','clarify'].includes(answer.status)){
+      target.append(el('p',errors[answer.error]||statuses[answer.status]||'本次未得到可展示的回答。','department-empty'));return;
+    }
+    target.append(el('p',answer.sent_scope==='public_question_only'?'模型知识整理 · API 仅接收本次名称和通用问题。下方文献仅在本机检索，未发送给 API。':answer.evidence_status==='related_passages'?'模型结合本地片段整理；原文关联与结论支持仍需分别核对。':'本地全文库未匹配到相关片段，以下为模型知识整理。','department-help'));
+    const headings={identity:'名称与辨别',tradition:answer.kind==='herb'?'药性与传统功效':'组成与方义',uses:'应用与研究',cautions:'禁忌与相互作用',uncertainty:'待核对事项'};
+    for(const section of answer.sections||[]){
+      const article=el('article',null,'department-answer');article.append(el('h3',headings[section.key]||'咨询内容'),el('div',section.text,'department-prose'));
+      for(const id of section.evidence_ids||[]){
+        const index=(answer.references||[]).findIndex(item=>item.id===id);if(index<0)continue;
+        article.append(button(el,'关联原文片段 '+(index+1),()=>{const ref=target.querySelector('[data-consult-reference="'+index+'"]');ref?.focus();ref?.scrollIntoView({block:'start'});},'text-button'));
+      }
+      target.append(article);
+    }
+    if(answer.references?.length){
+      target.append(el('h3','本地相关文献'),el('p','片段与名称匹配，支持关系待核对；文献提及药材或方剂不等于证实疗效。','department-help'));
+      for(const [index,item] of answer.references.entries()){
+        const reference=el('details',null,'department-evidence-card');reference.dataset.consultReference=String(index);reference.tabIndex=-1;
+        reference.append(el('summary',(index+1)+' · '+(item.title_zh||item.title)),el('blockquote',item.quote),
+          el('p',[item.pmid?'PMID '+item.pmid:'',item.doi?'DOI '+item.doi:''].filter(Boolean).join(' · '),'department-help'),
+          sourceLink(el,item.page_url,'阅读原文 ↗'),details(el,'来源记录',{quote_sha256:item.quote_sha256,support_status:item.support_status}));target.append(reference);
+      }
+    }
+    target.append(el('p','供专业知识查阅，内容尚未经临床审核；个体选方与剂量由接诊医师判断。','department-help'));
+    if(answer.model)target.append(el('p','模型：'+answer.model+(answer.elapsed_seconds!=null?' · 用时 '+answer.elapsed_seconds+' 秒':''),'department-help'));
   }
   function renderAnswer(target,ctx) {
     const {el}=ctx,answer=state.answer;target.replaceChildren();
     if(!answer) {target.append(el('div','选择病种和文献范围，输入问题后在这里阅读回答与原文依据。','department-empty'));return;}
+    if(answer.workflow){renderExperts(target,ctx,answer);return;}
+    if(answer.kind){renderConsultation(target,ctx,answer);return;}
     const synthetic=answer.data_origin==='synthetic';
     target.append(tag(el,synthetic?'合成示例 · 非医学证据':'公共文献问答'),tag(el,synthetic?'未调用模型':'临床审核待完成',true));
     if(state.answerQuestion){const question=el('div',null,'department-question-card');question.append(el('p','本次问题','eyebrow'),el('p',state.answerQuestion));target.append(question);}
@@ -68,14 +189,37 @@
     target.append(el('p','原文定位与结论支持分别核对；回答完整性及临床适用性保留人工判断。','department-help'));
   }
   async function knowledge(box,ctx) {
-    const {el,error,isCurrent}=ctx;
-    if(!state.catalog)state.catalog=await request(ctx,'knowledge/catalog');
+    const {el,error,isCurrent}=ctx,view=++knowledgeView,session=epoch;
+    if(!state.catalog){const catalog=await request(ctx,'knowledge/catalog');if(session!==epoch||view!==knowledgeView||!isCurrent())return;state.catalog=catalog;}
     if(!isCurrent())return;
+    let active=null,activeJob=null;
     const synthetic=state.catalog.data_origin==='synthetic';
     const grid=el('div',null,'department-grid'), left=el('section',null,'department-query-panel'),right=el('section',null,'department-reading-panel');
-    left.append(el('p','本地知识库','eyebrow'),el('h2','查找有出处的回答'));
+    const queryTitle=el('h2','查找有出处的回答');left.append(el('p','本地知识库','eyebrow'),queryTitle);
+    const mode=el('select');mode.id='department_mode';
+    for(const [value,label] of [['literature','文献问答'],['herb','药材咨询'],['formula','方剂咨询']]){const option=el('option',label);option.value=value;mode.append(option);}mode.value=state.mode;
+    const subject=el('input');subject.type='text';subject.id='department_subject';subject.maxLength=80;subject.value=state.subject;
+    const subjectField=field(el,'咨询名称',subject);
+    const collaboration=el('select');collaboration.id='department_collaboration';
+    for(const [value,label] of [['single','单模型咨询'],['experts','专家协作 · 试用']]){const option=el('option',label);option.value=value;collaboration.append(option);}
+    collaboration.value=state.collaborative?'experts':'single';const collaborationField=field(el,'处理方式',collaboration);
+    const provider=el('select');provider.id='department_provider';
+    const providers=state.catalog.consultation?.providers||[];
+    for(const [value,label] of [['local','本地模型'],['deepseek','DeepSeek API'],['kimi','Kimi API']]){
+      const available=providers.find(item=>item.provider===value),option=el('option',label+(available?.configured?'':' · 未配置'));option.value=value;provider.append(option);
+    }provider.value=state.provider;
+    const providerField=field(el,'回答模型',provider),modelNote=el('p',null,'department-help');modelNote.id='department_model_status';
+    const expertProvider=el('select');expertProvider.id='department_expert_provider';
+    for(const [value,label] of [['local','本地模型'],['kimi','本地 + Kimi API'],['kimi_all','全部 Kimi 3.1']]){
+      const option=el('option',label);option.value=value;expertProvider.append(option);
+    }expertProvider.value=state.expertProvider;
+    const expertProviderField=field(el,'协作模型',expertProvider);
+    const publicTopic=el('input');publicTopic.type='checkbox';publicTopic.id='department_public_topic';publicTopic.checked=state.publicTopic;
+    const publicField=field(el,'本次仅含通用咨询问题，不含患者身份信息或病例资料。',publicTopic);publicField.className='department-check';
+    const publicEvidence=el('input');publicEvidence.type='checkbox';publicEvidence.id='department_public_evidence';publicEvidence.checked=state.publicEvidence;
+    const evidenceField=field(el,'允许将本轮选中的公开文献片段及角色报告发送给 Kimi；不含私有病例或患者资料。',publicEvidence);evidenceField.className='department-check';
     const form=el('form'), question=el('textarea');question.id='department_question';question.maxLength=1000;question.required=true;question.value=state.question;
-    question.placeholder=synthetic?state.catalog.example_question:'例如：2016年干燥综合征分类标准是什么？';question.oninput=()=>{state.question=question.value;};
+    question.placeholder=synthetic?state.catalog.example_question:'例如：2016年干燥综合征分类标准是什么？';question.oninput=()=>{state.question=question.value;invalidate();};
     const disease=el('select');disease.id='department_disease';for(const [value,label] of [['all','全部病种'],['sjd','干燥综合征'],['ra','类风湿关节炎'],['gout','痛风']]) {const o=el('option',label);o.value=value;disease.append(o);}disease.value=state.disease;
     const search=el('input');search.type='search';search.id='department_source_search';search.value=state.search;search.placeholder='标题、PMID 或 DOI';
     const selected=el('p',null,'department-help'),sources=el('div',null,'department-source-list');sources.setAttribute('aria-label','文献范围');
@@ -86,30 +230,87 @@
       selected.textContent=synthetic?'当前范围：合成软件示例':state.source?'当前范围：'+(all.find(s=>s.id===state.source)?.title_zh||all.find(s=>s.id===state.source)?.title||state.source):'当前范围：所选病种的全部可检索全文';
       count.textContent=synthetic?'合成软件示例 '+all.length+' 条 · 不包含临床文献':'已接入 '+all.length+' 篇全文 · 匹配 '+matches.length+' 篇'+(matches.length>30?'，显示前 30 篇，请继续缩小搜索':'');
       sources.replaceChildren();
-      const auto=button(el,synthetic?'使用合成软件示例':'在全部可检索全文中查找',()=>{state.source='';fillSources();},'department-source');auto.setAttribute('aria-pressed',String(!state.source));sources.append(auto);
+      const auto=button(el,synthetic?'使用合成软件示例':'在全部可检索全文中查找',()=>{state.source='';invalidate();fillSources();},'department-source');auto.setAttribute('aria-pressed',String(!state.source));sources.append(auto);
       for(const source of matches.slice(0,30)) {
-        const b=button(el,source.title_zh||source.title,()=>{state.source=source.id;fillSources();},'department-source');b.setAttribute('aria-pressed',String(state.source===source.id));
+        const b=button(el,source.title_zh||source.title,()=>{state.source=source.id;invalidate();fillSources();},'department-source');b.setAttribute('aria-pressed',String(state.source===source.id));
         b.append(el('small',[source.year,source.pmid?'PMID '+source.pmid:'',synthetic?'固定合成示例':source.retrieval_eligible?'可检索':'仅阅读'].filter(Boolean).join(' · ')));sources.append(b);
       }
       if(!matches.length)sources.append(el('p','当前筛选没有匹配文献。请调整病种或搜索词。','department-help'));
     }
-    search.oninput=()=>{state.search=search.value;fillSources();};disease.onchange=()=>{state.disease=disease.value;state.source='';fillSources();};
+    search.oninput=()=>{state.search=search.value;fillSources();};disease.onchange=()=>{state.disease=disease.value;state.source='';invalidate();fillSources();};
     const submit=el('button','查找依据并回答','primary');submit.type='submit';submit.id='department_ask';
     const feedback=el('div');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
-    form.append(field(el,synthetic?'合成示例问题':'公共文献问题',question),field(el,'病种范围',disease),submit,feedback);
-    if(synthetic){form.prepend(el('p','当前为合成软件演示，无医学文献、无模型推理。仅示例问题返回固定的合成出处。','department-help'));form.append(button(el,'填入合成示例问题',()=>{question.value=state.catalog.example_question;state.question=question.value;}));}
+    const cancel=button(el,'停止等待',()=>{invalidate();feedback.replaceChildren(el('p','已停止等待并请求停止后续协作；当前模型调用可能仍在处理，晚到结果不会写入当前页面。','department-help'));});cancel.id='department_cancel';cancel.hidden=true;
+    const example=button(el,'填入咨询示例',()=>{invalidate();subject.value=state.mode==='herb'?'黄芪':'桂枝汤';question.value=state.mode==='herb'?'介绍药性、传统功效，以及禁忌和相互作用方面需要核对的事项。':'介绍组成、方义与传统适用证候，以及使用时需要核对的风险。';state.subject=subject.value;state.question=question.value;});example.id='department_consult_example';
+    form.append(field(el,'咨询类型',mode),subjectField,collaborationField,providerField,expertProviderField,modelNote,publicField,evidenceField,field(el,synthetic?'合成示例或通用咨询问题':'通用咨询问题',question),example,field(el,'病种范围',disease),submit,cancel,feedback);
+    if(synthetic){form.prepend(el('p','当前为合成软件演示，无医学文献、无模型推理。仅示例问题返回固定的合成出处。','department-help'));form.append(button(el,'填入合成示例问题',()=>{invalidate();question.value=state.catalog.example_question;state.question=question.value;}));}
     left.append(form,el('p','仅输入通用医学问题。患者档案不会自动带入问答。','department-help'),el('h3','文献范围'),field(el,'搜索本地全文库',search),selected,count,sources);
     right.append(el('p','回答 · 原文 · 来源','eyebrow'),el('h2','回答与依据'));const answer=el('div');answer.id='department_answer';answer.tabIndex=-1;answer.setAttribute('aria-label','本次回答与依据');right.append(answer);renderAnswer(answer,ctx);
+    function syncMode(){
+      const consulting=state.mode!=='literature',experts=consulting&&state.collaborative,selectedProvider=experts?state.expertProvider:state.provider,
+        allKimi=experts&&selectedProvider==='kimi_all',remote=consulting&&selectedProvider!=='local',info=providers.find(item=>item.provider===(allKimi?'kimi':selectedProvider)),
+        supported=allKimi?state.catalog.collaboration?.modes?.includes('all_kimi'):!experts||selectedProvider==='local'||state.catalog.collaboration?.providers?.includes(selectedProvider);
+      queryTitle.textContent=consulting?'查阅药材与方剂知识':'查找有出处的回答';
+      subjectField.hidden=providerField.hidden=modelNote.hidden=example.hidden=!consulting;publicField.hidden=!remote;
+      collaborationField.hidden=!consulting;providerField.hidden=!consulting||experts;
+      expertProviderField.hidden=!experts;
+      evidenceField.hidden=!allKimi;
+      subject.required=consulting;subject.placeholder=state.mode==='herb'?'例如：黄芪（注明炮制品）':'例如：桂枝汤（注明版本）';
+      subjectField.querySelector('span').textContent=state.mode==='herb'?'药材名称':'方剂名称';
+      modelNote.textContent=!state.catalog.consultation?.enabled?'连接本地全文库后可使用模型咨询。':!info?.configured?'所选服务尚未配置，请由管理员配置后重启。':remote?'仅将本次名称和通用问题发送至所选 API；本地文献全文和患者档案留在本机。':'使用 '+info.model+' 在本机整理，并检索相关文献片段。';
+      if(experts)modelNote.textContent=!supported?'当前服务尚未启用混合协作，请由管理员更新服务。':!info?.configured?'所选协作模型尚未配置或配置无效，请由管理员核对。':remote?
+        'Kimi（'+info.model+'）与本地文献角色同时运行，再由本地模型做药学审查和汇总。每轮最多调用 Kimi 一次；仅发送本次名称和通用问题，文献全文和病例资料留在本机。':
+        '本地试用：依次完成中医知识、文献证据、药学安全与汇总，可能需要数分钟。模型仍可能误解文献，每条结论均需核对原文。';
+      if(allKimi&&supported)modelNote.textContent=info?.model!=='kimi-k3.1-pro'?'全部 Kimi 模式需要配置 kimi-k3.1-pro，请由管理员核对。':!info?.configured?'Kimi 尚未配置，请由管理员配置后重启。':
+        '四个角色均调用 Kimi 3.1，每轮最多 4 次 API 调用。中医知识与文献证据并行，随后药学审查和汇总。发送本次通用问题、最多 3 个公开文献片段（合计不超过 2600 字符）及角色报告。';
+      submit.textContent=experts?'开始专家协作':consulting?'咨询并查找相关文献':'查找依据并回答';
+      submit.disabled=Boolean(active)||(consulting&&(!info?.enabled||(remote&&!state.publicTopic)))||(experts&&(!state.catalog.collaboration?.enabled||!supported||(!allKimi&&!providers.find(item=>item.provider==='local')?.enabled)))||(allKimi&&(!state.publicEvidence||info?.model!=='kimi-k3.1-pro'));
+      cancel.hidden=!active;
+    }
+    function invalidate(clearAnswer=false){
+      state.knowledgeRevision++;if(active)active.abort();active=null;feedback.replaceChildren();
+      if(activeJob){void request(ctx,'knowledge/collaborations/'+activeJob+'/cancel',{}).catch(()=>{});activeJob=null;}
+      if(clearAnswer){state.answer=null;state.answerQuestion='';state.answerReviewed=null;renderAnswer(answer,ctx);}syncMode();
+    }
+    mode.onchange=()=>{state.mode=mode.value;invalidate(true);};
+    collaboration.onchange=()=>{state.collaborative=collaboration.value==='experts';invalidate(true);};
+    subject.oninput=()=>{state.subject=subject.value;invalidate();};
+    provider.onchange=()=>{state.provider=provider.value;state.publicTopic=false;publicTopic.checked=false;invalidate(true);};
+    expertProvider.onchange=()=>{state.expertProvider=expertProvider.value;state.publicTopic=false;publicTopic.checked=false;state.publicEvidence=false;publicEvidence.checked=false;invalidate(true);};
+    publicTopic.onchange=()=>{state.publicTopic=publicTopic.checked;invalidate();};
+    publicEvidence.onchange=()=>{state.publicEvidence=publicEvidence.checked;invalidate();};
     form.onsubmit=async event=> {
-      event.preventDefault();const token=epoch,asked=question.value.trim();submit.disabled=true;submit.textContent=synthetic?'正在读取合成示例…':'正在查阅全文…';feedback.replaceChildren(el('p',synthetic?'正在核对合成示例的来源摘要；未调用模型。':'本地模型正在选择证据，请稍候。','department-help'));
+      event.preventDefault();if(submit.disabled)return;const token=epoch,revision=++state.knowledgeRevision,asked=question.value.trim(),consulting=state.mode!=='literature',controller=new AbortController();active=controller;
+      controller.signal.addEventListener('abort',()=>{if(activeJob){const job=activeJob;activeJob=null;void request(ctx,'knowledge/collaborations/'+job+'/cancel',{}).catch(()=>{});}},{once:true});
+      submit.disabled=true;cancel.hidden=false;submit.textContent=consulting?'正在整理咨询回答…':synthetic?'正在读取合成示例…':'正在查阅全文…';feedback.replaceChildren(el('p',consulting?'正在调用所选模型并核对来源，请稍候。':synthetic?'正在核对合成示例的来源摘要；未调用模型。':'本地模型正在选择证据，请稍候。','department-help'));
       try {
-        const result=await request(ctx,'knowledge/extract',{question:asked,disease:state.disease,source_id:state.source||'all',index_sha256:state.catalog.index_sha256});
-        if(token!==epoch||!isCurrent())return;state.answer=result;state.answerQuestion=asked;renderAnswer(answer,ctx);feedback.replaceChildren();
+        const payload={question:asked,disease:state.disease,source_id:state.source||'all',index_sha256:state.catalog.index_sha256};
+        if(consulting)Object.assign(payload,{kind:state.mode,subject:subject.value.trim(),provider:state.provider,public_topic_confirmed:state.publicTopic});
+        const experts=consulting&&state.collaborative;
+        if(experts){payload.provider=state.expertProvider==='kimi_all'?'kimi':state.expertProvider;
+          if(state.expertProvider==='kimi_all')Object.assign(payload,{expert_mode:'all_kimi',public_evidence_confirmed:state.publicEvidence});}
+        let result=await request(ctx,experts?'knowledge/collaborate':consulting?'knowledge/consult':'knowledge/extract',payload,controller);
+        if(experts&&result.job_id){
+          const job=result.job_id;activeJob=job;
+          while(['running','cancel_requested'].includes(result.status)){
+            if(token!==epoch||view!==knowledgeView||revision!==state.knowledgeRevision||!isCurrent()||controller.signal.aborted){void request(ctx,'knowledge/collaborations/'+job+'/cancel',{}).catch(()=>{});return;}
+            const progress=el('ol',null,'department-expert-progress');
+            for(const [role,label] of Object.entries(expertLabels))progress.append(el('li',label+'：'+(expertStatuses[result.roles?.[role]]||'等待中')+expertModel(result.role_models?.[role])));
+            feedback.replaceChildren(el('p',result.stage==='retrieve'?'正在检索与核对原文…':'专家协作处理中…','department-help'),progress);
+            controllers.add(controller);await pollDelay(controller.signal);result=await request(ctx,'knowledge/collaborations/'+job,undefined,controller);
+          }
+          activeJob=null;result=result.result||{workflow:'expert-knowledge-v1',status:result.status};
+        }
+        if(token!==epoch||view!==knowledgeView||revision!==state.knowledgeRevision||!isCurrent()||controller.signal.aborted)return;state.answer=result;state.answerQuestion=asked;state.answerReviewed=null;renderAnswer(answer,ctx);feedback.replaceChildren();
         if(window.matchMedia('(max-width: 1100px)').matches){answer.focus({preventScroll:true});right.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
-      }catch(exc){if(token===epoch&&isCurrent())error(feedback,exc);}
-      finally{if(token===epoch&&isCurrent()){submit.disabled=false;submit.textContent='查找依据并回答';}}
+      }catch(exc){if(token===epoch&&view===knowledgeView&&revision===state.knowledgeRevision&&isCurrent()&&exc.name!=='AbortError')error(feedback,exc);}
+      finally{
+        controllers.delete(controller);
+        if(activeJob){const job=activeJob;activeJob=null;void request(ctx,'knowledge/collaborations/'+job+'/cancel',{}).catch(()=>{});}
+        if(token===epoch&&view===knowledgeView&&active===controller){active=null;if(isCurrent())syncMode();}
+      }
     };
-    fillSources();grid.append(left,right);box.replaceChildren(grid);
+    syncMode();fillSources();grid.append(left,right);box.replaceChildren(grid);
   }
   function medicineNames(result,codes) {
     const vocabulary=result.vocabulary?.medicines||{};
@@ -265,7 +466,7 @@
     state.recognition={records:state.records};state.excluded=new Set();state.confirmed=false;state.result=null;state.revision++;
   }
   function selectKnowledgeSource(sourceId) {
-    state.source=sourceId;state.disease='all';state.search='';state.question='';state.answer=null;state.answerQuestion='';
+    state.mode='literature';state.knowledgeRevision++;state.source=sourceId;state.disease='all';state.search='';state.question='';state.answer=null;state.answerQuestion='';
   }
   window.Department=Object.freeze({render,renderFull,clear,useAssistantRecords,selectKnowledgeSource});
 })();

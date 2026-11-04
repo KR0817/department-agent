@@ -1,6 +1,6 @@
 [project]
 name = "department-agent"
-version = "0.2.0"
+version = "0.3.0"
 description = "Local clinical review, evidence provenance and prescription analytics workbench"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -15,6 +15,7 @@ dependencies = [
   "pillow==12.3.0",
   "python-multipart==0.0.32",
   "openpyxl==3.1.5",
+  "langgraph==1.2.19",
 ]
 
 [tool.uv]

@@ -17,6 +17,12 @@ SPEC.loader.exec_module(release_check)
 
 
 class ReleaseCheckTests(unittest.TestCase):
+    def test_frontend_source_allowed_but_build_and_dependencies_rejected(self):
+        for path in ('frontend/src/Consultation.tsx', 'frontend/package-lock.json', 'clinical/consultation_graph.py'):
+            self.assertIsNone(release_check.path_rule(path))
+        for path in ('clinical/static/consultation/entry.js', 'frontend/node_modules/react/index.js'):
+            self.assertIsNotNone(release_check.path_rule(path))
+
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory(prefix='department-release-test-')
         self.root = Path(self.temporary.name)

@@ -72,7 +72,18 @@ The font retains its own OFL terms and is not relicensed as AGPL. Bundling the f
 with the application does not change the font's license. See the [official OFL
 text](https://openfontlicense.org/open-font-license-official-text/) for its terms.
 
-## Knowledge sources and optional dependencies
+## React consultation dependencies
+
+The independently implemented consultation frontend uses React, React DOM and
+Scheduler under the MIT license. Their shared upstream license is retained in
+`licenses/React-MIT.txt`. React is bundled locally at build time; no third-party
+interface, prompt, corpus or asset from the reference archive is copied.
+
+The Python workflow uses LangGraph under the MIT license, retained in
+`licenses/LangGraph-MIT.txt`. Other npm and Python dependencies retain their own
+upstream licenses and notices. Package lock files identify the installed versions.
+
+## Knowledge source distribution
 
 The knowledge-module software license covers its original source code and the
 repository's explicitly synthetic examples. It does not cover external papers,

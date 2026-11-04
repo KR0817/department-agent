@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0 - 2026-11-05
+
+- Add a separate React/TypeScript consultation workspace with versioned draft recovery.
+- Execute source parsing, missing-field questions and explicit review through LangGraph.
+- Preserve original clinical, knowledge, prescription and assistant workspaces.
+- Build local frontend assets with Vite; retain same-origin authentication and disable external graph tracing.
+- Add structured herb/formula consultation with local, DeepSeek and Kimi transports.
+- Add four-role expert collaboration with progress, cancellation, source identity and manual review.
+- Support local-only, local + Kimi and all Kimi 3.1 modes, with explicit public-evidence consent for all-Kimi.
+- Preserve the connected local literature index while excluding its corpus from the public release.
+
 ## 0.2.0 - 2026-11-02
 
 - Add a department assistant for explicit task selection, intake supplementation,

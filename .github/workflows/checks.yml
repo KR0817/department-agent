@@ -37,13 +37,24 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install uv
         run: python -m pip install uv==0.11.32
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend dependencies
+        run: npm --prefix frontend ci --ignore-scripts
+      - name: Build React frontend
+        run: npm --prefix frontend run build
+      - name: Test React frontend
+        run: npm --prefix frontend test
       - name: Install locked dependencies
         run: uv sync --frozen
       - name: Check public source boundary
         run: uv run --frozen python scripts/release_check.py
       - name: Run module tests
         run: uv run --frozen python scripts/check.py
-      - name: Run assistant state tests
-        run: node --test tests/assistant_state.test.cjs
+      - name: Run assistant and knowledge state tests
+        run: node --test tests/assistant_state.test.cjs tests/knowledge_state.test.cjs
       - name: Run isolated integration smoke
         run: uv run --frozen python scripts/smoke_test.py

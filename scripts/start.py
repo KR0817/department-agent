@@ -89,6 +89,8 @@ def main():
                            capture_output=True, text=True, check=True)
     if Path(probe.stdout.strip()).resolve() != ROOT:
         raise ValueError('Run from an independent Git clone of this project')
+    if any(not (CLINICAL / 'static/consultation' / name).is_file() for name in ('entry.js', 'consultation.css')):
+        parser.error('Build the React frontend first: npm --prefix frontend ci && npm --prefix frontend run build')
     with run_lock(ROOT / 'work/prepare.lock'):
         site = prepare_site()
     if args.prepare_only:

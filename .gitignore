@@ -5,7 +5,9 @@ __pycache__/
 .ruff_cache/
 .uv-cache/
 node_modules/
+clinical/static/consultation/
 work/
+outputs/
 **/work/
 dist/
 build/

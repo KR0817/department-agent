@@ -240,6 +240,23 @@ def assistant_flow(client, checks):
     library = checks.response('assistant_knowledge_categories', client.get(root + '/library')).json()
     counts = {category['id']: category['count'] for category in library['categories']}
     checks.check('assistant_empty_corpora_are_explicit', counts['classics'] == counts['formula'] == 0 and counts['synthetic'] == 1)
+    consultation = checks.response('consultation_real_langgraph', client.post(root + '/consultation',
+        json={'action': 'advance', 'draft': draft})).json()
+    checks.check('consultation_question_branch', consultation['engine'] == 'langgraph'
+        and consultation['stage'] == 'question' and consultation['trace'] == ['recognize', 'assess', 'ask_question']
+        and not consultation['model_called'] and consultation['prepared']['original_records'] == recognized['records'])
+    checks.response('consultation_premature_review_rejected', client.post(root + '/consultation',
+        json={'action': 'review', 'draft': draft}), 409)
+    complete = {**draft, 'supplements': [*draft['supplements'], *[
+        {**item, 'status': 'unavailable', 'value': ''} for item in consultation['prepared']['missing']
+        if item['status'] == 'not_asked']]}
+    ready = checks.response('consultation_review_ready', client.post(root + '/consultation',
+        json={'action': 'advance', 'draft': complete})).json()
+    reviewed = checks.response('consultation_explicit_review', client.post(root + '/consultation',
+        json={'action': 'review', 'draft': complete})).json()
+    checks.check('consultation_keeps_business_approval_separate', ready['stage'] == 'review_ready'
+        and reviewed['stage'] == 'reviewed' and reviewed['clinical_approval'] is None
+        and reviewed['prepared']['review_confirmed'] is False)
     return path, saved
 
 
@@ -310,6 +327,8 @@ def main():
                 checks.check('current_homepage_csp', "script-src 'self'" in csp and "object-src 'none'" in csp
                              and "frame-ancestors 'none'" in csp and 'unsafe-inline' not in csp)
                 static_files = sorted(p for p in (CLINICAL / 'static').rglob('*') if p.is_file())
+                checks.check('react_frontend_assets_built', all((CLINICAL / 'static/consultation' / name).is_file()
+                    for name in ('entry.js', 'consultation.css')))
                 for path in static_files:
                     relative = path.relative_to(CLINICAL / 'static').as_posix()
                     response = checks.response('clinical_static_' + relative, client.get('/static/' + relative))
@@ -330,6 +349,10 @@ def main():
                 restored_flow(client, clinical, prescription, checks)
                 restored = checks.response('restart_assistant_draft', client.get(assistant_path)).json()
                 checks.check('restart_assistant_context_and_supplements_preserved', restored == assistant_draft)
+                resumed = checks.response('restart_consultation_resume_graph', client.post('/api/department/assistant/consultation',
+                    json={'action': 'advance', 'draft': restored['draft']})).json()
+                checks.check('restart_consultation_resumes_question', resumed['stage'] == 'question'
+                    and resumed['prepared']['supplements'] == restored['draft']['supplements'])
             checks.completed = True
     except Exception:
         # Deliberately suppress request bodies, nonce values, identities and exception details.
